@@ -63,7 +63,7 @@ const vendors = [
     }
 ];
 
-const CompanyMasterTable = () => {
+const AssetMasterTable = () => {
     const { searchQuery, setSearchQuery, filteredData } = useSearch(vendors);
     // Toast notification function
     const notify = () => toast.error("Delete Data");
@@ -89,9 +89,9 @@ const CompanyMasterTable = () => {
         
         <div className="right-content">
             <div className="card shadow border-0 w-100 flex-row p-4 res-col d-flex justify-content-between">
-                <h5 className='mb-0 d-flex align-items-center'>  Company Master Table</h5>
+                <h5 className='mb-0 d-flex align-items-center'>  Asset Master Table</h5>
                 <div className="">
-                    <Link to="/Master/CompanyMaster/">
+                    <Link to="/Master/AssetMaster">
                         <Button variant="contained" color="success">Add</Button>
                     </Link>
 
@@ -192,4 +192,4 @@ const CompanyMasterTable = () => {
     )
 }
 
-export default CompanyMasterTable
+export default AssetMasterTable

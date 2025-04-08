@@ -74,6 +74,12 @@ const SideBar = () => {
                             <li><Link to="/Master/UserMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>User</Link></li>
                             <li><Link to="/Master/CompanyMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Company</Link></li>
                             <li><Link to="/Master/Location"><span className='icon mr-3 me-2'><FaUserAlt /></span>Location</Link></li>
+                            <li><Link to="/Master/Division"><span className='icon mr-3 me-2'><FaUserAlt /></span>Division</Link></li>
+                            <li><Link to="/Master/Department"><span className='icon mr-3 me-2'><FaUserAlt /></span>Department</Link></li>
+                            <li><Link to="/Master/TaxMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Tax Master</Link></li>
+                            <li><Link to="/Master/GLMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>GL Type</Link></li>
+                            <li><Link to="/Master/AssetType"><span className='icon mr-3 me-2'><FaUserAlt /></span>Asset Type</Link></li>
+                            <li><Link to="/Master/AssetMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Asset Master</Link></li>
                            
 
                         </ul>

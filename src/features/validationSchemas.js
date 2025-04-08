@@ -84,3 +84,63 @@ export const LocationValidationSchema = yup.object().shape({
     Description:required,
 
 })
+
+
+export const DivisionValidationSchema = yup.object().shape({
+    abc:required,
+    Description:required,
+
+})
+
+export const GLValidationSchema = yup.object().shape({
+    GLType:required,
+    Description:required,
+
+})
+
+
+export const AssetTypeValidationSchema = yup.object().shape({
+    AssetType:required,
+    Description:required,
+    Method:required,
+    DepSalvageValue:number,
+    RecoveryRate:number,
+
+})
+
+
+export const AssetMasterValidationSchema = yup.object().shape({
+    AssetName:required,
+    AssetType:required,
+    manufacturer:required,
+    Price:number,
+    GLType:required,
+    assetType: yup
+    .string()
+    .oneOf(["Consumable", "FixedAsset", "GroupAsset"], "Please select an asset type")
+    .required("Please select an asset type"),
+    Description:required,
+    
+
+})
+
+
+
+
+
+export const DepartmentValidationSchema = yup.object().shape({
+    DepartmentName:required,
+    Location:required,
+    Description:required,
+
+})
+
+
+export const TaxValidationSchema = yup.object().shape({
+    TaxName:required,
+    Percentage:number,
+   
+
+})
+
+

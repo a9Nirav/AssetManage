@@ -14,8 +14,7 @@ import { FaUpload } from "react-icons/fa6";
 
 import { DivisionValidationSchema } from "../../features/validationSchemas";
 
-const Location = () => {
-
+const Division = () => {
     // React Hook Form Setup
     const {
         register,
@@ -41,17 +40,18 @@ const Location = () => {
                     <div className="d-flex justify-content-between algin-content-center align-items-center">
 
 
-                        <h5 className='mb-0'>+ Location</h5>
+                        <h5 className='mb-0'>+ ADD Division</h5>
 
                         <Button className="ms-2" variant="contained" color="success"><FaUpload className="me-1" />
                             import</Button>
                     </div>
 
+
                     <hr />
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
-                            <CustomInput label="Location" name="abc" register={register} errors={errors} />
+                            <CustomInput label="Division" name="abc" register={register} errors={errors} />
                             <CustomInput label="Description" name="Description" register={register} errors={errors} />
 
                         </div>
@@ -93,10 +93,10 @@ const Location = () => {
                                 <td>
                                     <div className="actions d-flex align-items-center">
                                         {/* <Link to="/">
-                           
-                                <Button className="secondary" color="secondary"><FaEye /></Button>
-                         
-                        </Link> */}
+                       
+                            <Button className="secondary" color="secondary"><FaEye /></Button>
+                     
+                    </Link> */}
                                         <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
 
                                         <Button className="error" color="error"><MdDelete /></Button>
@@ -123,4 +123,4 @@ const Location = () => {
     )
 }
 
-export default Location
+export default Division
