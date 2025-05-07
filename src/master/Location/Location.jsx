@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@mui/material'
+import { useState,useEffect } from "react";
 
 import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
@@ -12,26 +13,79 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import { FaUpload } from "react-icons/fa6";
 
-import { DivisionValidationSchema } from "../../features/validationSchemas";
+import { LocationValidationSchema } from "../../features/validationSchemas";
+import { postData, getData } from "../../utils/apiClient.js";
+
 
 const Location = () => {
+
+
+    const [locations, setLocations] = useState([]);
+    const [editId, setEditId] = useState(null);
+
+    // Pre-fill form when editing
+const startEdit = (loc) => {
+    setEditId(loc.id);
+    setValue("LocName", loc.LocName); // from react-hook-form
+    setValue("LocDesc", loc.LocDesc);
+  };
+
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const response = await getData('location'); // Replace with your actual endpoint
+                setLocations(response);
+            } catch (error) {
+                toast.error("Failed to fetch locations");
+            }
+        };
+
+        fetchLocations();
+    }, []);
 
     // React Hook Form Setup
     const {
         register,
         handleSubmit,
         formState: { errors },
+        setValue,
+        reset,
+      } = useForm({
+        resolver: yupResolver(LocationValidationSchema),
+      });
 
-    } = useForm({
-        resolver: yupResolver(DivisionValidationSchema),
 
-    });
 
-    const onSubmit = (data) => {
 
-        console.log("Form Data:", data);
-        toast.success("Submit Data Success");
-    };
+    // const onSubmit = async (data) => {
+    //     try {
+    //         const response = await postData('location', data); // 'add-location' is your API endpoint
+    //         console.log("API Location:", response);
+    //         toast.success("Location added successfully!");
+    //     } catch (error) {
+    //         toast.error("Failed to add location.");
+    //     }
+    // };
+
+    const onSubmit = async (data) => {
+        try {
+          if (editId) {
+            await putData(`location/${editId}`, data); // endpoint with ID
+            toast.success("Location updated successfully!");
+          } else {
+            await postData("location", data);
+            toast.success("Location added successfully!");
+          }
+          setEditId(null);
+          reset(); // clear form
+          fetchLocations(); // refresh list
+        } catch (error) {
+          toast.error("Operation failed");
+        }
+      };
+
+      
+
     return (
         <>
             <ToastContainer />
@@ -51,8 +105,8 @@ const Location = () => {
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
-                            <CustomInput label="Location" name="abc" register={register} errors={errors} />
-                            <CustomInput label="Description" name="Description" register={register} errors={errors} />
+                            <CustomInput label="Location" name="LocName" register={register} errors={errors} />
+                            <CustomInput label="Description" name="LocDesc" register={register} errors={errors} />
 
                         </div>
 
@@ -82,31 +136,22 @@ const Location = () => {
                         <tbody>
 
 
-                            <tr>
 
-
-                                <td>1	</td>
-                                <td>Mumbai</td>
-                                <td>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Culpa, dolore?</td>
-
-
-                                <td>
-                                    <div className="actions d-flex align-items-center">
-                                        {/* <Link to="/">
-                           
-                                <Button className="secondary" color="secondary"><FaEye /></Button>
-                         
-                        </Link> */}
-                                        <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
-
-                                        <Button className="error" color="error"><MdDelete /></Button>
-                                    </div>
-                                </td>
-                            </tr>
-
-
-
-
+                            {locations.map((loc, index) => (
+                                <tr key={loc.id || index}>
+                                    <td>{index + 1}</td>
+                                    <td>{loc.LocName}</td>
+                                    <td>{loc.LocDesc}</td>
+                                    <td>
+                                        <div className="actions d-flex align-items-center">
+                                            <Link to="">
+                                                <Button className="success" color="success" onClick={() => startEdit(loc)}><FaPencilAlt /></Button>
+                                            </Link>
+                                            <Button className="error" color="error"><MdDelete /></Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
 
 
                         </tbody>

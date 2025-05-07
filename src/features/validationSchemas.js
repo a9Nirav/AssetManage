@@ -80,8 +80,8 @@ export const CompnayValidationSchema = yup.object().shape({
 
 
 export const LocationValidationSchema = yup.object().shape({
-    Location:required,
-    Description:required,
+    LocName:required,
+    LocDesc:required,
 
 })
 
@@ -91,6 +91,7 @@ export const DivisionValidationSchema = yup.object().shape({
     Description:required,
 
 })
+
 
 export const GLValidationSchema = yup.object().shape({
     GLType:required,
