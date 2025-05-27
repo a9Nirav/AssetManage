@@ -80,6 +80,7 @@ const SideBar = () => {
                             <li><Link to="/Master/GLMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>GL Type</Link></li>
                             <li><Link to="/Master/AssetType"><span className='icon mr-3 me-2'><FaUserAlt /></span>Asset Type</Link></li>
                             <li><Link to="/Master/AssetMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Asset Master</Link></li>
+                            <li><Link to="/Master/VendorMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Vendor Master</Link></li>
                            
 
                         </ul>
@@ -98,7 +99,7 @@ const SideBar = () => {
                     </Button>
                     <div className={`submenuWrapper ${isTransactionsSubmenuOpen ? 'colapse' : 'colapsed'}`}>
                         <ul className='submenu'>
-                            <li><Link to="/">Asset Allocation</Link></li>
+                            <li><Link to="/Transactions/AssetAlloction">Asset Allocation</Link></li>
                             <li><Link to="/">Product View</Link></li>
                             <li><Link to="/">Product Upload</Link></li>
                         </ul>
@@ -147,7 +148,7 @@ const SideBar = () => {
 
             <div className='logoutWrapper'>
                 <div className='logoutBox'>
-                    <Button variant="contained my-btn"><IoMdLogOut /> Logout</Button>
+                    <Button variant="contained my-btn" onClick={()=>localStorage.removeItem('auth')}><IoMdLogOut /> Logout</Button>
                 </div>
             </div>
         </div>

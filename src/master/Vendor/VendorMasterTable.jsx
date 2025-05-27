@@ -73,7 +73,7 @@ const vendors = [
 ];
 
 
-const UserMasterTable = () => {
+const VendorMasterTable = () => {
  const dispatch = useDispatch();
 
  const user = useSelector(state => state.master.user)
@@ -126,8 +126,8 @@ const UserMasterTable = () => {
             <div className='right-content w-100'>
 
                 <div className="card shadow border-0 w-100 flex-row p-4 res-col d-flex justify-content-between">
-                    <h5 className='mb-0 d-flex align-items-center'>User Master</h5>
-                    <Link to="/Master/UserMaster">
+                    <h5 className='mb-0 d-flex align-items-center'>Vendor Master</h5>
+                    <Link to="/Master/VendorMaster">
                         <Button variant="contained" color="success">+ add</Button>
                     </Link>
 
@@ -236,4 +236,4 @@ const UserMasterTable = () => {
     )
 }
 
-export default UserMasterTable
+export default VendorMasterTable

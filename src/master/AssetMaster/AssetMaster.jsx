@@ -42,10 +42,10 @@ const AssetMaster = () => {
             <ToastContainer />
             <div className="right-content w-100">
                 <div className="card shadow border-0 w-100 flex-row p-4 res-col d-flex justify-content-between">
-                    <h5 className="mb-0 d-flex align-items-center">Asset  Master</h5>
+                    <h5 className="mb-0 d-flex align-items-center">Asset  Allocation</h5>
 
                     <div className="">
-                        <Link to="/Master/AssetMasterTable">
+                        <Link to="">
                             <Button variant="contained" color="success" className="phone-btn">View</Button>
                         </Link>
 

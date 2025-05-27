@@ -1,0 +1,167 @@
+// src/features/location/MasterSlice.js
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchLocations, createLocation, updateLocation,getlogin, createUser,
+  fetchUser,createDept,createDivi,fetchDivi,fetchDept,createTaxMaster,fetchTaxMaster,createGLType,fetchGLType,createVendor
+  ,fetchVendor
+ } from './masterApi';
+
+const MasterSlice = createSlice({
+  name: 'location',
+  initialState: {
+    locations: [],
+    loading: false, 
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      // Get All
+      .addCase(fetchLocations.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchLocations.fulfilled, (state, action) => {
+        state.loading = false;
+        state.locations = action.payload;
+      })
+      .addCase(fetchLocations.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Create location 
+    //   .addCase(createLocation.fulfilled, (state, action) => {
+    //     state.locations.push(action.payload);
+    //   })
+
+    .addCase(createLocation.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.locations.push(action.payload); // push actual location object
+        }
+      })
+      
+      // user 
+      .addCase(createUser.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.user.push(action.payload); // push actual user object
+        }
+      })
+
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+
+
+      // Update
+      .addCase(updateLocation.fulfilled, (state, action) => {
+        const index = state.locations.findIndex(loc => loc.id === action.payload.id);
+        if (index !== -1) {
+          state.locations[index] = action.payload;
+        }
+      })
+
+      // dept 
+      .addCase(createDept.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.Dept.push(action.payload); // push actual user object
+        }
+      })
+
+       .addCase(fetchDept.fulfilled, (state, action) => {
+        state.loading = false;
+        state.Depts = action.payload;
+      })
+
+      // Divistion 
+      .addCase(createDivi.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.divi.push(action.payload); // push actual user object
+        }
+      })
+
+      .addCase(fetchDivi.fulfilled, (state, action) => {
+        state.loading = false;
+        state.divis = action.payload;
+      })
+
+
+      // tax Master 
+       .addCase(createTaxMaster.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.taxMaster.push(action.payload); // push actual user object
+        }
+      })
+
+       .addCase(fetchTaxMaster.fulfilled, (state, action) => {
+        state.loading = false;
+        state.divis = action.payload;
+      })
+
+      // GL Type 
+        .addCase(createGLType.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.taxMaster.push(action.payload); // push actual user object
+        }
+      })
+
+      .addCase(fetchGLType.fulfilled, (state, action) => {
+        state.loading = false;
+        state.GLTypes = action.payload;
+      })
+
+
+      // Vendor 
+         .addCase(createVendor.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.taxMaster.push(action.payload); 
+        }
+      })
+
+      .addCase(fetchVendor.fulfilled, (state, action) => {
+        state.loading = false;
+        state.GLTypes = action.payload;
+      })
+
+      
+
+
+
+
+
+
+
+
+
+    //   login
+    // .addCase(getlogin.fulfilled, (state, action) => {
+    //     // state.locations.push(action.payload);
+    //     state.loading = false;
+    //     state.logindata = action.payload.data;
+    //   })
+    .addCase(getlogin.fulfilled, (state, action) => {
+        const loginData = action.payload.data;
+        state.loginData = loginData;
+        console.log(loginData)
+      
+        // Store in localStorage
+        localStorage.setItem('auth', JSON.stringify({
+          UserId: loginData.userName,
+          ComCode: loginData.currentCompany
+        }));
+      });
+
+
+
+      
+
+    
+ 
+      
+
+
+
+
+  },
+});
+
+export default MasterSlice.reducer;

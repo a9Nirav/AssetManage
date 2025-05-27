@@ -11,8 +11,12 @@ import { Visibility, VisibilityOff } from "@mui/icons-material"; // Eye Icons fr
 
 
 import { FaUpload } from "react-icons/fa6";
+import { useDispatch, useSelector } from 'react-redux';
+import {createUser} from "../../features/masterApi.js"
+
 
 const UserMaster = () => {
+   const dispatch = useDispatch();
   // const [showLoginFields, setShowLoginFields] = useState(false);
   // const handleCheckboxChange = () => setShowLoginFields((prev) => !prev);
 
@@ -43,11 +47,14 @@ const UserMaster = () => {
     defaultValues: { userType: "technician" }, // Set default user type
   });
 
-  const onSubmit = (data) => {
-
+  const onSubmit = async (data) => {
+    await dispatch(createUser(data)).unwrap();
     console.log("Form Data:", data);
     toast.success("Submit Data Success");
+  
   };
+
+    
 
   return (
     <>
@@ -74,17 +81,18 @@ const UserMaster = () => {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row">
-              <CustomInput label="Name" name="name" register={register} errors={errors} />
-              <CustomInput label="Email" name="email" type="email" register={register} errors={errors} />
-              <CustomInput label="Phone" name="phone" type="number" register={register} errors={errors} />
-              <CustomInput label="Job Title" name="jobTitle" register={register} errors={errors} />
+              <CustomInput label="Name" name="user_Name" register={register} errors={errors} />
+              <CustomInput label="Email" name="email_ID" type="email" register={register} errors={errors} />
+              <CustomInput label="Phone" name="phone_No" type="number" register={register} errors={errors} />
+              <CustomInput label="Job Title" name="job_Title" register={register} errors={errors} />
+           
 
               {/* Location Dropdown */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Location:<sup className="text-red-500">*</sup></label>
                 <select
-                  className={`form-select form-control ${errors.selectLocation ? "is-invalid" : ""}`}
-                  {...register("selectLocation")}
+                  className={`form-select form-control ${errors.loc_Code ? "is-invalid" : ""}`}
+                  {...register("loc_Code")}
                 >
                   <option value="">Select a location</option>
                   <option value="Mumbai">Mumbai</option>
@@ -97,23 +105,23 @@ const UserMaster = () => {
               {/* Division Dropdown */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Division:<sup className="text-red-500">*</sup></label>
-                <select className={`form-select form-control ${errors.selectDivision ? "is-invalid" : ""}`} {...register("selectDivision")}>
+                <select className={`form-select form-control ${errors.div_Code ? "is-invalid" : ""}`} {...register("div_Code")}>
                   <option value="">Select a division</option>
                   <option value="1">Software Division</option>
                   <option value="2">Hardware Division</option>
                 </select>
-                <div className="invalid-feedback">{errors.selectDivision?.message}</div>
+                <div className="invalid-feedback">{errors.div_Code?.message}</div>
               </div>
 
               {/* Department Dropdown */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Department:<sup className="text-red-500">*</sup></label>
-                <select className={`form-select form-control ${errors.selectDepartMent ? "is-invalid" : ""}`} {...register("selectDepartMent")}>
+                <select className={`form-select form-control ${errors.dept_Code ? "is-invalid" : ""}`} {...register("dept_Code")}>
                   <option value="">Select a department</option>
                   <option value="1">IT</option>
                   <option value="2">Sales</option>
                 </select>
-                <div className="invalid-feedback">{errors.selectDepartMent?.message}</div>
+                <div className="invalid-feedback">{errors.dept_Code?.message}</div>
               </div>
 
               {/* Radio Button for Role Selection */}
@@ -141,18 +149,21 @@ const UserMaster = () => {
                 </div>
               </div>
 
+          
+
               {/* Conditional Fields - Show only if Login is selected */}
               {userType === "login" && (
                 <>
-                  <CustomInput label="User ID" name="UserId" register={register} errors={errors} />
+                 
+                  <CustomInput label="User ID" name="userid" register={register} errors={errors} />
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Role:<sup className="text-red-500">*</sup></label>
-                    <select className={`form-select form-control ${errors.selectRole ? "is-invalid" : ""}`} {...register("selectRole")}>
+                    <select className={`form-select form-control ${errors.rollid ? "is-invalid" : ""}`} {...register("rollid")}>
                       <option value="">Select a Role</option>
                       <option value="admin">Admin</option>
                       <option value="other">Other</option>
                     </select>
-                    <div className="invalid-feedback">{errors.selectRole?.message}</div>
+                    <div className="invalid-feedback">{errors.rollid?.message}</div>
                   </div>
                   {/* Password Field with Eye Icon */}
                   <div className="col-md-6 mb-3 position-relative">
@@ -160,8 +171,8 @@ const UserMaster = () => {
                     <div className="input-group">
                       <input
                         type={showPassword ? "text" : "password"}
-                        className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                        {...register("password")}
+                        className={`form-control ${errors.userPwd ? "is-invalid" : ""}`}
+                        {...register("userPwd")}
                       />
                       <span className="input-group-text" onClick={togglePasswordVisibility} style={{ cursor: "pointer" }}>
                         {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -172,6 +183,9 @@ const UserMaster = () => {
 
                   {/* Confirm Password Field with Eye Icon */}
                   <div className="col-md-6 mb-3 position-relative">
+
+
+                    
                     <label className="form-label">Confirm Password:</label>
                     <div className="input-group">
                       <input
@@ -185,6 +199,7 @@ const UserMaster = () => {
                     </div>
                     <div className="invalid-feedback">{errors.confirmPassword?.message}</div>
                   </div>
+                    <CustomInput label="Compnay Code" name="comCode" register={register} errors={errors} />
                 </>
               )}
             </div>

@@ -7,31 +7,32 @@ const urlRegex = /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?$/;
 const number = yup.string().matches(/^[0-9]+$/, "Only numbers are allowed").required("This field is required");
 const Phone = yup.string().matches(/^\d{10}$/, "Phone must be exactly 10 digits").required("Phone number is required");
 
+
 export const userValidationSchema = yup.object().shape({
-    name: name1,
-    email: yup.string().email("Invalid email").required("is required"),
-    jobTitle: yup.string().required("is required").min(3, "Job Title must be at least 3 characters"),
-    phone: yup.string().matches(/^\d{10}$/, "Phone must be exactly 10 digits").required("Phone number is required"),
-    selectLocation: yup.string().required("Location is required"),
-    selectDivision: yup.string().required("Division is required"),
-    selectDepartMent: yup.string().required("Department is required"),
+    user_Name: name1,
+    email_ID: yup.string().email("Invalid email").required("is required"),
+    job_Title: yup.string().required("is required").min(3, "Job Title must be at least 3 characters"),
+    phone_No: yup.string().matches(/^\d{10}$/, "Phone must be exactly 10 digits").required("Phone number is required"),
+    loc_Code: yup.string().required("Location is required"),
+    div_Code: yup.string().required("Division is required"),
+    dept_Code: yup.string().required("Department is required"),
 
     // Apply validation only when `userType` is "login"
     userType: yup.string().required("User type is required"), 
 
-    UserId: yup.string().when("userType", {
+    userid: yup.string().when("userType", {
         is: "login",
         then: (schema) => schema.required("User ID is required"),
         otherwise: (schema) => schema.notRequired(),
     }),
 
-    selectRole: yup.string().when("userType", {
+    rollid: yup.string().when("userType", {
         is: "login",
         then: (schema) => schema.required("Role is required"),
         otherwise: (schema) => schema.notRequired(),
     }),
 
-    password: yup.string().when("userType", {
+    userPwd: yup.string().when("userType", {
         is: "login",
         then: (schema) =>
             schema.matches(
@@ -41,13 +42,44 @@ export const userValidationSchema = yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
 
-    confirmPassword: yup.string().when("userType", {
-        is: "login",
-        then: (schema) =>
-            schema.oneOf([yup.ref("password"), null], "Passwords must match").required("Confirm Password is required"),
-        otherwise: (schema) => schema.notRequired(),
-    }),
+    // confirmPassword: yup.string().when("userType", {
+    //     is: "login",
+    //     then: (schema) =>
+    //         schema.oneOf([yup.ref("password"), null], "Passwords must match").required("Confirm Password is required"),
+    //     otherwise: (schema) => schema.notRequired(),
+    // }),
 });
+
+
+export const vendorValidationSchema = yup.object().shape({
+    vdr_Name: name1,
+    vdr_Desc:required,
+    cntct_Per:name1,
+    phone_No:Phone,
+    email:email,
+    fax_No: yup.string().matches(/^(\+?\d{1,4}[-\s]?)?(\d{3}[-\s]?\d{3}[-\s]?\d{4})$/, "Invalid fax number format").required(" number is required"),
+    web_URL: yup.string().matches(urlRegex, "Invalid URL format").required("Website URL is required"),
+    AccountUnit:number,
+    VisibilityPin:number,
+    country:name1,
+    addr1:required,
+    addr2:required,
+    addr3:required,
+    city:name1,
+    posCode: yup.string().matches(/^[A-Za-z0-9]{5,10}$/, "Invalid postal code format").required("Please enter the postal code"),
+    state:name1,
+    // MtnVendor: yup
+    // .boolean()
+    // .oneOf([true],"Mtnvendor Required") ,
+    // supplier: yup
+    // .boolean()
+    // .oneOf([true],"supplier Required") ,
+   
+   
+});
+
+
+
 
 
 export const CompnayValidationSchema = yup.object().shape({
@@ -87,17 +119,20 @@ export const LocationValidationSchema = yup.object().shape({
 
 
 export const DivisionValidationSchema = yup.object().shape({
-    abc:required,
-    Description:required,
+    div_Name:required,
+    div_Desc:required,
 
 })
 
 
 export const GLValidationSchema = yup.object().shape({
-    GLType:required,
-    Description:required,
+    gL_Type:required,
+    account_Desc:required,
+    accountCode:required,
 
 })
+
+
 
 
 export const AssetTypeValidationSchema = yup.object().shape({
@@ -130,17 +165,90 @@ export const AssetMasterValidationSchema = yup.object().shape({
 
 
 export const DepartmentValidationSchema = yup.object().shape({
-    DepartmentName:required,
-    Location:required,
-    Description:required,
+    dept_Name:required,
+    loc_Code:required,
+    dept_Desc:required,
 
 })
 
 
 export const TaxValidationSchema = yup.object().shape({
-    TaxName:required,
-    Percentage:number,
-   
+    taxname:required,
+    percentage:number,
+})
+
+
+
+// transction validation 
+export const assetAllocation = yup.object().shape({
+AssetType:required,
+Asset:required,
+AssetName:required,
+tag:required,
+SerialNo:required,
+barCode:required,
+vendorName:required,
+acquisitionDate:required,
+expiryDate:required,
+assetType1: yup.string().oneOf(["leased", ""]),
+
+leasedStart: yup.date().when("assetType1", {
+  is: "leased",
+  then: schema => schema.required("Leased Start is required"),
+  otherwise: schema => schema.nullable(),
+}),
+leasedEnd: yup.date().when("assetType1", {
+  is: "leased",
+  then: schema => schema.required("Leased End is required"),
+  otherwise: schema => schema.nullable(),
+}),
+
+
+warranty:required,
+
+cost:yup.number()
+    .typeError('Cost value must be a number')
+    .required('Cost value is required')
+    .positive('Cost value must be greater than zero')
+    .max(10000000, 'Cost value cannot exceed 1 crore'),
+purValue:yup.number()
+    .typeError('Purchase value must be a number')
+    .required('Purchase value is required')
+    .positive('Purchase value must be greater than zero')
+    .max(10000000, 'Purchase value cannot exceed 1 crore'),
+image: yup.mixed().required("Image is required"),
+
+
+
+})
+
+
+
+export const step1Schema = yup.object().shape({
+    PoRefNo:number,
+    // SigningAuthority:required,
+    // PoNo:required,
+    // Fax: yup.string().matches(/^(\+?\d{1,4}[-\s]?)?(\d{3}[-\s]?\d{3}[-\s]?\d{4})$/, "Invalid fax number format").required(" number is required"),
+    // CreateDate:required,
+    // ContactPerson:required,
+    // Phone:Phone,
+    // Address:required,
+    // Remarks:required,
+    // Terms:required,
+    // vendorName:required,
+    // Location:required,
+    // Division:required,
+    // Department:required,
+    // Allocate:required,
+    
+    
+})
+
+
+export const step2Schema = yup.object().shape({
+    // Items:required,
+    // cost:number,
+    // quantity:number,
 
 })
 

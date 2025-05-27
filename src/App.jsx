@@ -19,6 +19,11 @@ import AssetType from './master/AssetType/AssetType';
 import AssetMaster from './master/AssetMaster/AssetMaster';
 import AssetMasterTable from './master/AssetMaster/AssetMasterTable';
 import Login from './pages/Login/Login';
+import VendorMaster from './master/Vendor/VendorMaster';
+import VendorMasterTable from './master/Vendor/VendorMasterTable';
+import AssetAllocation from './Transactions/AssetAllocation/AssetAllocation'
+import ViewAssetAlloction from './Transactions/AssetAllocation/ViewAssetAllocation';
+import PurchaseOrder from './Transactions/PurchaseOrder/PurchaseOrder';
 
 
 const MyContext = createContext();
@@ -103,6 +108,15 @@ function App() {
               <Route path="/Master/AssetType" element={<AssetType/>} />
               <Route path="/Master/AssetMaster" element={<AssetMaster/>} />
               <Route path="/Master/AssetMasterTable" element={<AssetMasterTable/>} />
+              <Route path="/Master/VendorMaster" element={<VendorMaster/>} />
+              <Route path="/Master/VendorMasterTable" element={<VendorMasterTable/>} />
+
+               <Route path="/Transactions/AssetAlloction" element={<AssetAllocation/>} />
+              <Route path="/Transactions/ViewAssetAlloction" element={<ViewAssetAlloction/>} />
+              <Route path="/Transactions/PurchaseOrder" element={<PurchaseOrder/>} />
+
+
+
              
      
             </Routes>

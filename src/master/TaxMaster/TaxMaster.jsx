@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
@@ -13,9 +13,20 @@ import { toast, ToastContainer } from "react-toastify";
 import useSearch from '../../features/useSearch';
 
 import { TaxValidationSchema } from "../../features/validationSchemas";
-
+import { useDispatch, useSelector } from 'react-redux';
+import { createTaxMaster, fetchTaxMaster } from '../../features/masterApi';
 
 const TaxMaster = () => {
+
+    const dispatch = useDispatch();
+    const taxMasters = useSelector(state => state.master.taxMaster)
+    console.log(taxMasters)
+
+     useEffect(() => {
+            dispatch(fetchTaxMaster());
+           
+          }, [dispatch]);
+
 
 
     const divisions = [
@@ -64,8 +75,10 @@ const TaxMaster = () => {
         resolver: yupResolver(TaxValidationSchema),
     });
 
-    const onSubmit = (data) => {
-        console.log("Form Data:", data);
+    const onSubmit = async (data) => {
+
+        await dispatch(createTaxMaster(data)).unwrap()
+
         toast.success("Submit Data Success");
     };
 
@@ -92,11 +105,11 @@ const TaxMaster = () => {
                         <div className="row">
 
 
-                            <CustomInput label="Tax Name" name="TaxName" register={register} errors={errors} />
-                            <CustomInput label="Percentage (%)" name="Percentage" register={register} errors={errors} />
+                            <CustomInput label="Tax Name" name="taxname" register={register} errors={errors} />
+                            <CustomInput label="Percentage (%)" name="percentage" register={register} errors={errors} />
 
 
-                          
+
 
                         </div>
 
@@ -145,34 +158,34 @@ const TaxMaster = () => {
                         <tbody>
 
                             {
-                                filteredData.length > 0 ?(filteredData.map((a, index) => (
+                                filteredData.length > 0 ? (filteredData.map((a, index) => (
                                     <tr key={a.id}>
-    
-    
+
+
                                         <td>{index + 1}</td>
                                         <td>{a.divisionName}</td>
                                         <td>{a.description}</td>
                                         <td>{a.location}</td>
-    
-    
+
+
                                         <td>
                                             <div className="actions d-flex align-items-center">
                                                 <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
-    
+
                                                 <Button className="error" color="error"><MdDelete /></Button>
                                             </div>
                                         </td>
                                     </tr>
-                                ))):(
+                                ))) : (
                                     <tr>
-                                    <td colSpan="8" className="text-center">
-                                        No results found
-                                    </td>
-                                </tr>
-                                    
+                                        <td colSpan="8" className="text-center">
+                                            No results found
+                                        </td>
+                                    </tr>
+
                                 )
                             }
-                          
+
 
 
 

@@ -735,7 +735,7 @@ body.dark .logoutWrapper .logoutBox {
 .right-content {
   padding: 90px 30px;
   padding-bottom: 10px;
-  background-color: #1c1c1c !important;
+  /* background-color: #1c1c1c !important; */
   height: auto !important;
 }
 

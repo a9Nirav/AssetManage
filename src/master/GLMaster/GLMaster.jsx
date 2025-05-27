@@ -3,7 +3,8 @@ import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
 import { Link } from 'react-router-dom';
-import { Button } from '@mui/material'
+import { Button } from '@mui/material';
+import CustomInput from "../../components/CustomInput/CustomInput";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,10 +13,21 @@ import { FaUpload } from "react-icons/fa6";
 import { toast, ToastContainer } from "react-toastify";
 import useSearch from '../../features/useSearch';
 
+import { useDispatch,useSelector } from 'react-redux';
+import {createGLType,fetchGLType} from "../../features/masterApi.js";
+import { useState, useEffect } from "react";
 import { GLValidationSchema } from "../../features/validationSchemas";
 
 
 const GLMaster = () => {
+    const dispatch = useDispatch()
+     const GLtypes = useSelector(state => state.master.GLTypes);
+     console.log(GLtypes);
+
+      useEffect(() => {
+             dispatch(fetchGLType());
+            
+           }, [dispatch]);
 
 
     const divisions = [
@@ -64,7 +76,8 @@ const GLMaster = () => {
         resolver: yupResolver(GLValidationSchema),
     });
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        await dispatch(createGLType(data)).unwrap();
         console.log("Form Data:", data);
         toast.success("Submit Data Success");
     };
@@ -91,33 +104,20 @@ const GLMaster = () => {
                     <form action="" onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
 
-
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">Location Name:</label>
-                                <select
-                                    className={`form-select form-control ${errors.GLType ? "is-invalid" : ""}`}
-                                    {...register("GLType")}
-                                    aria-label="Default select example"
-                                >
-                                    <option value="">Select a location</option>
-                                    <option value="Mumbai">Mumbai</option>
-                                    <option value="Pune">Pune</option>
-                                    <option value="Bangalore">Bangalore</option>
-                                </select>
-                                <div className="invalid-feedback">{`GL Type  ${errors.GLType?.message}`}</div>
-
-                            </div>
+                            <CustomInput label="GL Type" name="gL_Type" register={register} errors={errors} />
+                            <CustomInput label="Account Code" name="accountCode" register={register} errors={errors} />
+                
                             <div className="col-md-6 mb-3">
 
                                 <label className="form-label">Description:</label>
                                 <textarea
                                     type="text"
-                                    className={`form-select form-control ${errors.Description ? "is-invalid" : ""}`}
-                                    {...register("Description")}
+                                    className={` form-control ${errors.account_Desc ? "is-invalid" : ""}`}
+                                    {...register("account_Desc")}
 
                                     placeholder="Enter your name"
                                 />
-                                <div className="invalid-feedback">{`Description ${errors.Description?.message}`}</div>
+                                <div className="invalid-feedback">{`Description ${errors.account_Desc?.message}`}</div>
 
                             </div>
 

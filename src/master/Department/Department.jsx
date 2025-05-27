@@ -3,7 +3,8 @@ import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
 import { Link } from 'react-router-dom';
-import { Button } from '@mui/material'
+import { Button } from '@mui/material';
+import { useState, useEffect } from "react";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,9 +14,16 @@ import { toast, ToastContainer } from "react-toastify";
 import useSearch from '../../features/useSearch';
 
 import { DepartmentValidationSchema } from "../../features/validationSchemas";
+import { useDispatch, useSelector } from 'react-redux';
+import { createDept, fetchDept } from '../../features/masterApi';
 
 
 const Department = () => {
+
+    const dispatch = useDispatch()
+const Dept = useSelector((state) => state.master.Depts);
+
+
 
 
     const divisions = [
@@ -62,9 +70,26 @@ const Department = () => {
         resolver: yupResolver(DepartmentValidationSchema),
     });
 
-    const onSubmit = (data) => {
-        console.log("Form Data:", data);
-        toast.success("Submit Data Success");
+    // const onSubmit = (data) => {
+    //     console.log("Form Data:", data);
+    //     toast.success("Submit Data Success");
+    // };
+
+    useEffect(() => {
+        dispatch(fetchDept());
+
+    }, [dispatch]);
+
+    const onSubmit = async (data) => {
+        console.log("hi")
+
+        await dispatch(createDept(data)).unwrap();
+        toast.success("Dept added successfully!");
+
+
+        reset();       // Clear the form
+
+
     };
 
 
@@ -90,13 +115,13 @@ const Department = () => {
                         <div className="row">
 
 
-                            <CustomInput label="Department Name" name="DepartmentName" register={register} errors={errors} />
+                            <CustomInput label="Department Name" name="dept_Name" register={register} errors={errors} />
 
                             <div className="col-md-6 mb-3">
                                 <label className="form-label">Location Name:</label>
                                 <select
-                                    className={`form-select form-control ${errors.Location ? "is-invalid" : ""}`}
-                                    {...register("Location")}
+                                    className={`form-select form-control ${errors.loc_Code ? "is-invalid" : ""}`}
+                                    {...register("loc_Code")}
                                     aria-label="Default select example"
                                 >
                                     <option value="">Select a location</option>
@@ -104,7 +129,7 @@ const Department = () => {
                                     <option value="Pune">Pune</option>
                                     <option value="Bangalore">Bangalore</option>
                                 </select>
-                                <div className="invalid-feedback">{`Location  ${errors.Location?.message}`}</div>
+                                <div className="invalid-feedback">{`Location  ${errors.loc_Code?.message}`}</div>
 
                             </div>
 
@@ -113,12 +138,12 @@ const Department = () => {
                                 <label className="form-label">Description:</label>
                                 <textarea
                                     type="text"
-                                    className={`form-select form-control ${errors.Description ? "is-invalid" : ""}`}
-                                    {...register("Description")}
+                                    className={` form-control ${errors.dept_Desc ? "is-invalid" : ""}`}
+                                    {...register("dept_Desc")}
 
                                     placeholder="Enter your name"
                                 />
-                                <div className="invalid-feedback">{`Description ${errors.Description?.message}`}</div>
+                                <div className="invalid-feedback">{`Description ${errors.dept_Desc?.message}`}</div>
 
                             </div>
 
@@ -168,34 +193,34 @@ const Department = () => {
                         <tbody>
 
                             {
-                                filteredData.length > 0 ?(filteredData.map((a, index) => (
+                                filteredData.length > 0 ? (filteredData.map((a, index) => (
                                     <tr key={a.id}>
-    
-    
+
+
                                         <td>{index + 1}</td>
                                         <td>{a.divisionName}</td>
                                         <td>{a.description}</td>
                                         <td>{a.location}</td>
-    
-    
+
+
                                         <td>
                                             <div className="actions d-flex align-items-center">
                                                 <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
-    
+
                                                 <Button className="error" color="error"><MdDelete /></Button>
                                             </div>
                                         </td>
                                     </tr>
-                                ))):(
+                                ))) : (
                                     <tr>
-                                    <td colSpan="8" className="text-center">
-                                        No results found
-                                    </td>
-                                </tr>
-                                    
+                                        <td colSpan="8" className="text-center">
+                                            No results found
+                                        </td>
+                                    </tr>
+
                                 )
                             }
-                          
+
 
 
 

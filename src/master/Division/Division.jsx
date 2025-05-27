@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@mui/material'
 
@@ -12,9 +12,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import { FaUpload } from "react-icons/fa6";
 
+
 import { DivisionValidationSchema } from "../../features/validationSchemas";
+import { useDispatch, useSelector } from 'react-redux';
+import { createDivi,fetchDivi } from '../../features/masterApi';
+
 
 const Division = () => {
+    const dispatch = useDispatch();
+    const division = useSelector(state => state.master.Divi)
+console.log('division'+division)
     // React Hook Form Setup
     const {
         register,
@@ -26,8 +33,13 @@ const Division = () => {
 
     });
 
-    const onSubmit = (data) => {
 
+    useEffect(()=>{
+        dispatch(fetchDivi())
+    },[dispatch])
+
+    const onSubmit = async (data) => {
+        await dispatch(createDivi(data)).unwrap();
         console.log("Form Data:", data);
         toast.success("Submit Data Success");
     };
@@ -51,8 +63,8 @@ const Division = () => {
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
-                            <CustomInput label="Division" name="abc" register={register} errors={errors} />
-                            <CustomInput label="Description" name="Description" register={register} errors={errors} />
+                            <CustomInput label="Division" name="div_Name" register={register} errors={errors} />
+                            <CustomInput label="Description" name="div_Desc" register={register} errors={errors} />
 
                         </div>
 
