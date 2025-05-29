@@ -1,15 +1,16 @@
 // src/features/location/MasterSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchLocations, createLocation, updateLocation,getlogin, createUser,
-  fetchUser,createDept,createDivi,fetchDivi,fetchDept,createTaxMaster,fetchTaxMaster,createGLType,fetchGLType,createVendor
-  ,fetchVendor
- } from './masterApi';
+import {
+  fetchLocations, createLocation, updateLocation, getlogin, createUser,
+  fetchUser, createDept, createDivi, fetchDivi, fetchDept, createTaxMaster, fetchTaxMaster, createGLType, fetchGLType, createVendor
+  , fetchVendor
+} from './masterApi';
 
 const MasterSlice = createSlice({
   name: 'location',
   initialState: {
     locations: [],
-    loading: false, 
+    loading: false,
     error: null,
   },
   reducers: {},
@@ -29,16 +30,16 @@ const MasterSlice = createSlice({
       })
 
       // Create location 
-    //   .addCase(createLocation.fulfilled, (state, action) => {
-    //     state.locations.push(action.payload);
-    //   })
+      //   .addCase(createLocation.fulfilled, (state, action) => {
+      //     state.locations.push(action.payload);
+      //   })
 
-    .addCase(createLocation.fulfilled, (state, action) => {
+      .addCase(createLocation.fulfilled, (state, action) => {
         if (action.payload) {
           state.locations.push(action.payload); // push actual location object
         }
       })
-      
+
       // user 
       .addCase(createUser.fulfilled, (state, action) => {
         if (action.payload) {
@@ -53,12 +54,57 @@ const MasterSlice = createSlice({
 
 
       // Update
+      // .addCase(updateLocation.fulfilled, (state, action) => {
+      //   const index = state.locations.findIndex(loc => loc.rowNo === action.payload.rowNo);
+      //   if (index !== -1) {
+      //     state.locations[index] = action.payload;
+      //   }
+      // })
+
+      //  .addCase(updateLocation.fulfilled, (state, action) => {
+      //   const updated = action.payload;
+      //   const index = state.locations.findIndex((loc) => loc.locCode === updated.LocCode);
+      //   if (index !== -1) {
+      //     state.locations[index] = {
+      //       ...state.locations[index],
+      //       locName: updated.Loc_Name,
+      //       locDesc: updated.Loc_Desc,
+      //     };
+      //   }
+      // })
+
+
       .addCase(updateLocation.fulfilled, (state, action) => {
-        const index = state.locations.findIndex(loc => loc.id === action.payload.id);
+        const updatedLocation = action.payload;
+        const index = state.locations.findIndex(
+          (loc) => loc.locCode === updatedLocation.LocCode || loc.LocCode === updatedLocation.LocCode
+        );
         if (index !== -1) {
-          state.locations[index] = action.payload;
+          state.locations[index] = {
+            ...state.locations[index],
+            ...updatedLocation,
+          };
         }
+        
       })
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
 
       // dept 
       .addCase(createDept.fulfilled, (state, action) => {
@@ -67,62 +113,62 @@ const MasterSlice = createSlice({
         }
       })
 
-       .addCase(fetchDept.fulfilled, (state, action) => {
-        state.loading = false;
-        state.Depts = action.payload;
-      })
+    .addCase(fetchDept.fulfilled, (state, action) => {
+      state.loading = false;
+      state.Depts = action.payload;
+    })
 
-      // Divistion 
-      .addCase(createDivi.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.divi.push(action.payload); // push actual user object
-        }
-      })
+    // Divistion 
+    .addCase(createDivi.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.divi.push(action.payload); // push actual user object
+      }
+    })
 
-      .addCase(fetchDivi.fulfilled, (state, action) => {
-        state.loading = false;
-        state.divis = action.payload;
-      })
-
-
-      // tax Master 
-       .addCase(createTaxMaster.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.taxMaster.push(action.payload); // push actual user object
-        }
-      })
-
-       .addCase(fetchTaxMaster.fulfilled, (state, action) => {
-        state.loading = false;
-        state.divis = action.payload;
-      })
-
-      // GL Type 
-        .addCase(createGLType.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.taxMaster.push(action.payload); // push actual user object
-        }
-      })
-
-      .addCase(fetchGLType.fulfilled, (state, action) => {
-        state.loading = false;
-        state.GLTypes = action.payload;
-      })
+    .addCase(fetchDivi.fulfilled, (state, action) => {
+      state.loading = false;
+      state.divis = action.payload;
+    })
 
 
-      // Vendor 
-         .addCase(createVendor.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.taxMaster.push(action.payload); 
-        }
-      })
+    // tax Master 
+    .addCase(createTaxMaster.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.taxMaster.push(action.payload); // push actual user object
+      }
+    })
 
-      .addCase(fetchVendor.fulfilled, (state, action) => {
-        state.loading = false;
-        state.GLTypes = action.payload;
-      })
+    .addCase(fetchTaxMaster.fulfilled, (state, action) => {
+      state.loading = false;
+      state.Taxs = action.payload;
+    })
 
-      
+    // GL Type 
+    .addCase(createGLType.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.taxMaster.push(action.payload); // push actual user object
+      }
+    })
+
+    .addCase(fetchGLType.fulfilled, (state, action) => {
+      state.loading = false;
+      state.GLTypes = action.payload;
+    })
+
+
+    // Vendor 
+    .addCase(createVendor.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.taxMaster.push(action.payload);
+      }
+    })
+
+    .addCase(fetchVendor.fulfilled, (state, action) => {
+      state.loading = false;
+      state.GLTypes = action.payload;
+    })
+
+
 
 
 
@@ -139,29 +185,29 @@ const MasterSlice = createSlice({
     //     state.logindata = action.payload.data;
     //   })
     .addCase(getlogin.fulfilled, (state, action) => {
-        const loginData = action.payload.data;
-        state.loginData = loginData;
-        console.log(loginData)
-      
-        // Store in localStorage
-        localStorage.setItem('auth', JSON.stringify({
-          UserId: loginData.userName,
-          ComCode: loginData.currentCompany
-        }));
-      });
+      const loginData = action.payload.data;
+      state.loginData = loginData;
+      console.log(loginData)
 
-
-
-      
-
-    
- 
-      
+      // Store in localStorage
+      localStorage.setItem('auth', JSON.stringify({
+        UserId: loginData.userName,
+        ComCode: loginData.currentCompany
+      }));
+    });
 
 
 
 
-  },
+
+
+
+
+
+
+
+
+},
 });
 
 export default MasterSlice.reducer;

@@ -53,10 +53,10 @@ export const getData = async (endpoint, headers = {}) => {
 
   export const putData = async (endpoint, data, headers = {}) => {
     try {
-      const response = await axios.put(`${BASE_URL}/${endpoint}`, data, { headers });
+      const response = await axios.post(`${BASE_URL}/${endpoint}`, data, { headers });
       return response.data;
     } catch (error) {
-      console.error(`PUT ${endpoint} failed:`, error);
+      console.error(`POST ${endpoint} failed:`, error);
       throw error;
     }
   };

@@ -13,57 +13,25 @@ import { FaUpload } from "react-icons/fa6";
 import { toast, ToastContainer } from "react-toastify";
 import useSearch from '../../features/useSearch';
 
-import { useDispatch,useSelector } from 'react-redux';
-import {createGLType,fetchGLType} from "../../features/masterApi.js";
+import { useDispatch, useSelector } from 'react-redux';
+import { createGLType, fetchGLType } from "../../features/masterApi.js";
 import { useState, useEffect } from "react";
 import { GLValidationSchema } from "../../features/validationSchemas";
 
 
 const GLMaster = () => {
     const dispatch = useDispatch()
-     const GLtypes = useSelector(state => state.master.GLTypes);
-     console.log(GLtypes);
+    const GLtypes = useSelector(state => state.master.GLTypes || []);
+    console.log(GLtypes);
 
-      useEffect(() => {
-             dispatch(fetchGLType());
-            
-           }, [dispatch]);
+    useEffect(() => {
+        dispatch(fetchGLType());
+
+    }, [dispatch]);
 
 
-    const divisions = [
-        {
-            id: 1,
-            divisionName: "IT Department",
-            location: "New York",
-            description: "Responsible for managing the company's technology infrastructure and support."
-        },
-        {
-            id: 2,
-            divisionName: "Human Resources",
-            location: "Los Angeles",
-            description: "Handles recruitment, employee relations, and organizational development."
-        },
-        {
-            id: 3,
-            divisionName: "Finance",
-            location: "Chicago",
-            description: "Manages budgeting, financial planning, and accounting."
-        },
-        {
-            id: 4,
-            divisionName: "Marketing",
-            location: "San Francisco",
-            description: "Oversees branding, advertising, and market research strategies."
-        },
-        {
-            id: 5,
-            divisionName: "Operations",
-            location: "Houston",
-            description: "Ensures smooth execution of daily business processes."
-        }
-    ];
 
-    const { searchQuery, setSearchQuery, filteredData } = useSearch(divisions);
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(GLtypes);
 
 
 
@@ -71,6 +39,7 @@ const GLMaster = () => {
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(GLValidationSchema),
@@ -80,6 +49,9 @@ const GLMaster = () => {
         await dispatch(createGLType(data)).unwrap();
         console.log("Form Data:", data);
         toast.success("Submit Data Success");
+         dispatch(fetchGLType());
+         reset();
+
     };
 
 
@@ -104,20 +76,34 @@ const GLMaster = () => {
                     <form action="" onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
 
-                            <CustomInput label="GL Type" name="gL_Type" register={register} errors={errors} />
-                            <CustomInput label="Account Code" name="accountCode" register={register} errors={errors} />
-                
+                            {/* <CustomInput label="GL Type" name="gL_Type" register={register} errors={errors} /> */}
+
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">Asset Type:<sup className="text-red-500">*</sup></label>
+                                <select
+                                    className={`form-select form-control ${errors.GL_Type ? "is-invalid" : ""}`}
+                                    {...register("GL_Type")}
+                                >
+                                    <option value="">Select a location</option>
+                                    <option value="Cost">Cost</option>
+                                    <option value="Expense">Expense</option>
+                                    <option value="accumulation">accumulation</option>
+                                </select>
+                                <div className="invalid-feedback">{`GL_Type ${errors.GL_Type?.message}`}</div>
+                            </div>
+                            <CustomInput label="Account Code" name="AccountCode" register={register} errors={errors} />
+
                             <div className="col-md-6 mb-3">
 
                                 <label className="form-label">Description:</label>
                                 <textarea
                                     type="text"
-                                    className={` form-control ${errors.account_Desc ? "is-invalid" : ""}`}
-                                    {...register("account_Desc")}
+                                    className={` form-control ${errors.Account_Desc ? "is-invalid" : ""}`}
+                                    {...register("Account_Desc")}
 
                                     placeholder="Enter your name"
                                 />
-                                <div className="invalid-feedback">{`Description ${errors.account_Desc?.message}`}</div>
+                                <div className="invalid-feedback">{`Description ${errors.Account_Desc?.message}`}</div>
 
                             </div>
 
@@ -160,9 +146,9 @@ const GLMaster = () => {
                             <tr>
 
                                 <th style={{ width: "10px" }}>No.</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Location </th>
+                                <th>GL Type</th>
+                                <th>Account Code</th>
+                                <th>Account Des </th>
                                 <th>action</th>
 
                             </tr>
@@ -172,13 +158,13 @@ const GLMaster = () => {
 
                             {
                                 filteredData.length > 0 ? (filteredData.map((a, index) => (
-                                    <tr key={a.id}>
+                                    <tr key={a.rowNo}>
 
 
                                         <td>{index + 1}</td>
-                                        <td>{a.divisionName}</td>
-                                        <td>{a.description}</td>
-                                        <td>{a.location}</td>
+                                        <td>{a.glType}</td>
+                                        <td>{a.accountCode}</td>
+                                        <td>{a.accountDescription}</td>
 
 
                                         <td>

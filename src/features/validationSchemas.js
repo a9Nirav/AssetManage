@@ -112,23 +112,24 @@ export const CompnayValidationSchema = yup.object().shape({
 
 
 export const LocationValidationSchema = yup.object().shape({
-    LocName:required,
-    LocDesc:required,
+    Loc_Name:required,
+    Loc_Desc:required,
 
 })
 
 
 export const DivisionValidationSchema = yup.object().shape({
-    div_Name:required,
-    div_Desc:required,
+    Div_Name:required,
+    Div_Desc:required,
+    Loc_Code:required,
 
 })
 
 
 export const GLValidationSchema = yup.object().shape({
-    gL_Type:required,
-    account_Desc:required,
-    accountCode:required,
+    GL_Type:required,
+    Account_Desc:required,
+    AccountCode:required,
 
 })
 
@@ -165,16 +166,16 @@ export const AssetMasterValidationSchema = yup.object().shape({
 
 
 export const DepartmentValidationSchema = yup.object().shape({
-    dept_Name:required,
-    loc_Code:required,
-    dept_Desc:required,
+    Dept_Name:required,
+    Loc_Code:required,
+    Dept_Desc:required,
 
 })
 
 
 export const TaxValidationSchema = yup.object().shape({
-    taxname:required,
-    percentage:number,
+    Taxname:required,
+    Percentage:number,
 })
 
 

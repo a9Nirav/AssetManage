@@ -12,13 +12,16 @@ import { Visibility, VisibilityOff } from "@mui/icons-material"; // Eye Icons fr
 
 import { FaUpload } from "react-icons/fa6";
 import { useDispatch, useSelector } from 'react-redux';
-import {createUser} from "../../features/masterApi.js"
+import { createUser } from "../../features/masterApi.js";
 
 
 const UserMaster = () => {
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   // const [showLoginFields, setShowLoginFields] = useState(false);
   // const handleCheckboxChange = () => setShowLoginFields((prev) => !prev);
+
+  const locations = useSelector(state => state.master.locations);
+  const division = useSelector((state) => state.master.divis || [])
 
 
   const [userType, setUserType] = useState(""); // 'login' or 'technician'
@@ -51,10 +54,10 @@ const UserMaster = () => {
     await dispatch(createUser(data)).unwrap();
     console.log("Form Data:", data);
     toast.success("Submit Data Success");
-  
+
   };
 
-    
+
 
   return (
     <>
@@ -85,7 +88,7 @@ const UserMaster = () => {
               <CustomInput label="Email" name="email_ID" type="email" register={register} errors={errors} />
               <CustomInput label="Phone" name="phone_No" type="number" register={register} errors={errors} />
               <CustomInput label="Job Title" name="job_Title" register={register} errors={errors} />
-           
+
 
               {/* Location Dropdown */}
               <div className="col-md-6 mb-3">
@@ -95,9 +98,11 @@ const UserMaster = () => {
                   {...register("loc_Code")}
                 >
                   <option value="">Select a location</option>
-                  <option value="Mumbai">Mumbai</option>
-                  <option value="Pune">Pune</option>
-                  <option value="Bangalore">Bangalore</option>
+                  {locations.map((loc) => (
+                    <option key={loc.id} value={loc.locCode}>
+                      {loc.locName}
+                    </option>
+                  ))}
                 </select>
                 <div className="invalid-feedback">{errors.selectLocation?.message}</div>
               </div>
@@ -106,9 +111,11 @@ const UserMaster = () => {
               <div className="col-md-6 mb-3">
                 <label className="form-label">Division:<sup className="text-red-500">*</sup></label>
                 <select className={`form-select form-control ${errors.div_Code ? "is-invalid" : ""}`} {...register("div_Code")}>
-                  <option value="">Select a division</option>
-                  <option value="1">Software Division</option>
-                  <option value="2">Hardware Division</option>
+                 {division.map((divi)=>(
+                  <option key={divi.id} value={divi.divName}>
+                    {divi.divName}
+                  </option>
+                 ))}
                 </select>
                 <div className="invalid-feedback">{errors.div_Code?.message}</div>
               </div>
@@ -149,12 +156,12 @@ const UserMaster = () => {
                 </div>
               </div>
 
-          
+
 
               {/* Conditional Fields - Show only if Login is selected */}
               {userType === "login" && (
                 <>
-                 
+
                   <CustomInput label="User ID" name="userid" register={register} errors={errors} />
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Role:<sup className="text-red-500">*</sup></label>
@@ -185,7 +192,7 @@ const UserMaster = () => {
                   <div className="col-md-6 mb-3 position-relative">
 
 
-                    
+
                     <label className="form-label">Confirm Password:</label>
                     <div className="input-group">
                       <input
@@ -199,7 +206,7 @@ const UserMaster = () => {
                     </div>
                     <div className="invalid-feedback">{errors.confirmPassword?.message}</div>
                   </div>
-                    <CustomInput label="Compnay Code" name="comCode" register={register} errors={errors} />
+                  <CustomInput label="Compnay Code" name="comCode" register={register} errors={errors} />
                 </>
               )}
             </div>

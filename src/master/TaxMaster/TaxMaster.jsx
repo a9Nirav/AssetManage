@@ -19,7 +19,7 @@ import { createTaxMaster, fetchTaxMaster } from '../../features/masterApi';
 const TaxMaster = () => {
 
     const dispatch = useDispatch();
-    const taxMasters = useSelector(state => state.master.taxMaster)
+    const taxMasters = useSelector(state => state.master.Taxs || [])
     console.log(taxMasters)
 
      useEffect(() => {
@@ -29,40 +29,8 @@ const TaxMaster = () => {
 
 
 
-    const divisions = [
-        {
-            id: 1,
-            divisionName: "IT Department",
-            location: "New York",
-            description: "Responsible for managing the company's technology infrastructure and support."
-        },
-        {
-            id: 2,
-            divisionName: "Human Resources",
-            location: "Los Angeles",
-            description: "Handles recruitment, employee relations, and organizational development."
-        },
-        {
-            id: 3,
-            divisionName: "Finance",
-            location: "Chicago",
-            description: "Manages budgeting, financial planning, and accounting."
-        },
-        {
-            id: 4,
-            divisionName: "Marketing",
-            location: "San Francisco",
-            description: "Oversees branding, advertising, and market research strategies."
-        },
-        {
-            id: 5,
-            divisionName: "Operations",
-            location: "Houston",
-            description: "Ensures smooth execution of daily business processes."
-        }
-    ];
-
-    const { searchQuery, setSearchQuery, filteredData } = useSearch(divisions);
+  
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(taxMasters);
 
 
 
@@ -105,8 +73,8 @@ const TaxMaster = () => {
                         <div className="row">
 
 
-                            <CustomInput label="Tax Name" name="taxname" register={register} errors={errors} />
-                            <CustomInput label="Percentage (%)" name="percentage" register={register} errors={errors} />
+                            <CustomInput label="Tax Name" name="Taxname" register={register} errors={errors} />
+                            <CustomInput label="Percentage (%)" name="Percentage" register={register} errors={errors} />
 
 
 
@@ -147,9 +115,9 @@ const TaxMaster = () => {
                             <tr>
 
                                 <th style={{ width: "10px" }}>No.</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Location </th>
+                                <th>Tax Name</th>
+                                <th>Percentage</th>
+                               
                                 <th>action</th>
 
                             </tr>
@@ -159,13 +127,13 @@ const TaxMaster = () => {
 
                             {
                                 filteredData.length > 0 ? (filteredData.map((a, index) => (
-                                    <tr key={a.id}>
+                                    <tr key={a.rowNo}>
 
 
                                         <td>{index + 1}</td>
-                                        <td>{a.divisionName}</td>
-                                        <td>{a.description}</td>
-                                        <td>{a.location}</td>
+                                        <td>{a.taxName}</td>
+                                        <td>{a.percentage}</td>
+                                       
 
 
                                         <td>
