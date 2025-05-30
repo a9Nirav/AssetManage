@@ -16,16 +16,17 @@ import useSearch from '../../features/useSearch';
 import { DepartmentValidationSchema } from "../../features/validationSchemas";
 import { useDispatch, useSelector } from 'react-redux';
 import { createDept, fetchDept, fetchLocations } from '../../features/masterApi';
-
+import usePagination from "../../features/usePagination";
+import Pagination from '@mui/material/Pagination';
 
 const Department = () => {
 
     const dispatch = useDispatch()
     const Dept = useSelector((state) => state.master.Depts || []);
-    
+
     const locations = useSelector(state => state.master.locations);
 
-   
+
 
 
 
@@ -65,12 +66,22 @@ const Department = () => {
         toast.success("Dept added successfully!");
 
 
-           
+
         dispatch(fetchDept());
-        reset();  
+        reset();
 
 
     };
+
+
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
 
 
     return (
@@ -148,15 +159,28 @@ const Department = () => {
 
                 <div className="card shadow border-0 w-100  p-4 res-col table-responsive ">
 
-                    {/* Search Box */}
-                    <div className="searchBox d-flex align-items-center w-25">
-                        <IoSearch className="mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search here..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
                     </div>
 
                     <table className="table table-bordered table-striped v-align mt-3">
@@ -175,7 +199,7 @@ const Department = () => {
                         <tbody>
 
                             {
-                                filteredData.length > 0 ? (filteredData.map((a, index) => (
+                                paginatedData.length > 0 ? (paginatedData.map((a, index) => (
                                     <tr key={a.rowNo}>
 
 
@@ -214,6 +238,16 @@ const Department = () => {
                         </tbody>
 
                     </table>
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
+                    </div>
+
 
                 </div>
 

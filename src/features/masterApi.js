@@ -35,6 +35,7 @@ export const fetchLocations = createAsyncThunk('location/fetchAll', async () => 
     ComCode: auth?.ComCode || '',
   };
   const response = await postData(`${GetLocation}`, body);
+ 
   return response.data;
 });
 
@@ -79,13 +80,15 @@ export const getlogin = createAsyncThunk('getlogin', async () => {
 export const createLocation = createAsyncThunk('location/create', async (formData) => {
   const auth = getAuthInfo();
   const body = {
-    UserId: auth?.UserId || '',
+    // UserId: auth?.UserId || '',
+    UserId:"nirav",
     ComCode: auth?.ComCode || '',
+   
     ...formData, // merge formData into body
   };
   const response = await postData(`${AddLocation}`, body);
   console.log("Create Location Response:", response);
-  return response.data; // make sure this is the actual data
+  return response; // make sure this is the actual data
 });
 
 
@@ -207,7 +210,8 @@ export const fetchGLType = createAsyncThunk('GLType/fetchAll', async () => {
 export const createVendor = createAsyncThunk('Vendor/create', async (formData) => {
   const auth = getAuthInfo();
   const body = {
-    UserId: auth?.UserId || '',
+    // UserId: auth?.UserId || '',
+    UserCode:"001",
     ComCode: auth?.ComCode || '',
     ...formData, // merge formData into body
   };
@@ -270,6 +274,8 @@ export const fetchUser = createAsyncThunk('User/fetchAll', async () => {
 
 
 
+
+
 export const updateLocation = createAsyncThunk(
   'master/updateLocation',
   async ({ locCode, data }) => {
@@ -280,8 +286,9 @@ export const updateLocation = createAsyncThunk(
 
     await postData('/SAM_AddUpdateDelLocationDetails', payload); // returns 204
     return payload; // return the sent payload manually
+   
   }
-
+ 
 );
 
 

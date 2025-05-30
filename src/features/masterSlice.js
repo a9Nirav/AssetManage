@@ -88,6 +88,8 @@ const MasterSlice = createSlice({
         
       })
 
+      
+
 
 
 
@@ -165,7 +167,7 @@ const MasterSlice = createSlice({
 
     .addCase(fetchVendor.fulfilled, (state, action) => {
       state.loading = false;
-      state.GLTypes = action.payload;
+      state.Vendors = action.payload;
     })
 
 

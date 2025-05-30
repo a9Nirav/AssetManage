@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@mui/material'
 import { useState, useEffect } from "react";
+import { IoSearch } from "react-icons/io5";
 
 import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
@@ -12,20 +13,29 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import { FaUpload } from "react-icons/fa6";
+import useSearch from '../../features/useSearch';
 
 
 import { LocationValidationSchema } from "../../features/validationSchemas";
 import { postData, getData } from "../../utils/apiClient.js";
-import { fetchLocations, createLocation, updateLocation,deleteLocation } from "../../features/masterApi.js";
+import { fetchLocations, createLocation, updateLocation, deleteLocation } from "../../features/masterApi.js";
 import { useDispatch, useSelector } from 'react-redux';
+import usePagination from "../../features/usePagination"; // adjust path as needed
+
 
 
 
 const Location = () => {
+
+
+
+
+
+
     const dispatch = useDispatch();
     // const { locations, loading } = useSelector(state => state.location);
     const locations = useSelector(state => state.master.locations);
-
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(locations);
     // const [locations, setLocations] = useState([]);
     const [editId, setEditId] = useState("");
 
@@ -64,65 +74,58 @@ const Location = () => {
 
 
 
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
 
 
 
 
 
+    const onSubmit = async (data) => {
+        try {
+            let response;
+            if (editId) {
+            let response1 = await dispatch(updateLocation({ locCode: editId, data })).unwrap();
+                toast.success(response1?.errorDescription ||"Location ");
+                console.log(response1)
+            } else {
+              response =  await dispatch(createLocation(data)).unwrap();
+                toast.success(response?.errorDescription || "Location added successfully!");
+              console.log(response)
+               
+            }
 
-  const onSubmit = async (data) => {
-  try {
-    if (editId) {
-      await dispatch(updateLocation({ locCode: editId, data })).unwrap();
-      toast.success("Location updated successfully!");
-    } else {
-      await dispatch(createLocation(data)).unwrap();
-      toast.success("Location added successfully!");
-    }
+            reset();         // Clear the form
+            setEditId(null); // Exit edit mode
+            dispatch(fetchLocations()); // Refresh list
+        } catch (error) {
+            console.error("Submission error:", error);  // Debugging aid
+            toast.error(error);
 
-    reset();         // Clear the form
-    setEditId(null); // Exit edit mode
-    dispatch(fetchLocations()); // Refresh list
-  } catch (error) {
-    console.error("Submission error:", error);  // Debugging aid
-    toast.error("Operation failed");
-  }
-};
-
-
-const handleDelete = async (locCode) => {
-  if (window.confirm("Are you sure you want to delete this location?")) {
-    try {
-      await dispatch(deleteLocation(locCode)).unwrap();
-      toast.success("Location deleted successfully!");
-      dispatch(fetchLocations());
-    } catch (errorMessage) {
-      toast.error(errorMessage); // Show custom error from API
-      console.error("Delete error:", errorMessage);
-    }
-  }
-};
+        }
+    };
 
 
-// const handleDelete = async (locCode) => {
-//   if (window.confirm("Are you sure you want to delete this location?")) {
-//     try {
-//       await dispatch(deleteLocation(locCode)).unwrap();
-//       toast.success("Location deleted successfully!");
-//       dispatch(fetchLocations());
-//     } catch (errorMessage) {
-//       // ✅ This will show the API errorDescription in a toast
-//       toast.error(errorMessage);
-//     }
-//   }
-// };
+    const handleDelete = async (locCode) => {
+        if (window.confirm("Are you sure you want to delete this location?")) {
+            try {
+                await dispatch(deleteLocation(locCode)).unwrap();
+                toast.success("Location deleted successfully!");
+                dispatch(fetchLocations());
+            } catch (errorMessage) {
+                toast.error(errorMessage); // Show custom error from API
+                console.error("Delete error:", errorMessage);
+            }
+        }
+    };
 
 
-
-
-
-
- 
 
 
 
@@ -158,7 +161,7 @@ const handleDelete = async (locCode) => {
                         </div>
 
                         {/* Submit Button */}
-                        <button type="submit" className="btn btn-dark w-25 mt-3">
+                        <button type="submit" className="btn btn-dark  mt-3">
                             Submit
                         </button>
                     </form>
@@ -168,7 +171,31 @@ const handleDelete = async (locCode) => {
 
 
                 <div className="card shadow border-0 w-100  p-4 res-col">
-                    <table className="table table-bordered table-striped v-align">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
+                    </div>
+
+                    <table className="table table-bordered table-striped v-align mt-3">
                         <thead className="thead-dark">
                             <tr>
 
@@ -184,9 +211,9 @@ const handleDelete = async (locCode) => {
 
 
 
-                            {locations.map((loc, index) => (
+                            {paginatedData.map((loc, index) => (
                                 <tr key={loc.id || index}>
-                                    <td>{index + 1}</td>
+                                    <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                     <td>{loc.locName}</td>
                                     <td>{loc.locDesc}</td>
                                     <td>
@@ -204,6 +231,17 @@ const handleDelete = async (locCode) => {
                         </tbody>
 
                     </table>
+
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
+                    </div>
+
 
                 </div>
 

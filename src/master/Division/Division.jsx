@@ -18,7 +18,7 @@ import { IoSearch } from "react-icons/io5";
 import { DivisionValidationSchema } from "../../features/validationSchemas";
 import { useDispatch, useSelector } from 'react-redux';
 import { createDivi, fetchDivi } from '../../features/masterApi';
-
+import usePagination from "../../features/usePagination";
 
 const Division = () => {
     const dispatch = useDispatch();
@@ -49,10 +49,22 @@ const Division = () => {
         await dispatch(createDivi(data)).unwrap();
         console.log("Form Data:", data);
         toast.success("Submit Data Success");
-         dispatch(fetchDivi())
-         reset()
+        dispatch(fetchDivi())
+        reset()
 
     };
+
+
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
+
+    
     return (
         <>
             <ToastContainer />
@@ -106,14 +118,28 @@ const Division = () => {
 
 
                 <div className="card shadow border-0 w-100  p-4 res-col">
-                    <div className="searchBox d-flex align-items-center w-25 ">
-                        <IoSearch className="mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search here..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
                     </div>
                     <table className="table table-bordered table-striped v-align mt-3">
                         <thead className="thead-dark">
@@ -131,11 +157,11 @@ const Division = () => {
                         <tbody>
 
                             {
-                                filteredData.length > 0 ? (filteredData.map((a, index) => (
+                                paginatedData.length > 0 ? (paginatedData.map((a, index) => (
                                     <tr key={a.rowNo}>
 
 
-                                        <td>{index + 1}</td>
+                                        <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                         <td>{a.divName}</td>
                                         <td>{a.divDesc}</td>
                                         <td>{a.locName}</td>
@@ -170,6 +196,15 @@ const Division = () => {
                         </tbody>
 
                     </table>
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
+                    </div>
 
                 </div>
 

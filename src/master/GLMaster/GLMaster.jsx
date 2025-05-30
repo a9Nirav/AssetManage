@@ -5,6 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import CustomInput from "../../components/CustomInput/CustomInput";
+import Pagination from '@mui/material/Pagination';
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createGLType, fetchGLType } from "../../features/masterApi.js";
 import { useState, useEffect } from "react";
 import { GLValidationSchema } from "../../features/validationSchemas";
+import usePagination from "../../features/usePagination";
 
 
 const GLMaster = () => {
@@ -49,10 +51,20 @@ const GLMaster = () => {
         await dispatch(createGLType(data)).unwrap();
         console.log("Form Data:", data);
         toast.success("Submit Data Success");
-         dispatch(fetchGLType());
-         reset();
+        dispatch(fetchGLType());
+        reset();
 
     };
+
+
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
 
 
     return (
@@ -129,16 +141,28 @@ const GLMaster = () => {
 
                 <div className="card shadow border-0 w-100  p-4 res-col table-responsive ">
 
-                    {/* Search Box */}
-                    <div className="searchBox d-flex align-items-center w-25 w-sm-100">
-                        <IoSearch className="mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search here..."
-                            value={searchQuery}
-                            className='w-100'
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
                     </div>
 
                     <table className="table table-bordered table-striped v-align mt-3">
@@ -157,11 +181,11 @@ const GLMaster = () => {
                         <tbody>
 
                             {
-                                filteredData.length > 0 ? (filteredData.map((a, index) => (
+                                paginatedData.length > 0 ? (paginatedData.map((a, index) => (
                                     <tr key={a.rowNo}>
 
 
-                                        <td>{index + 1}</td>
+                                        <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                         <td>{a.glType}</td>
                                         <td>{a.accountCode}</td>
                                         <td>{a.accountDescription}</td>
@@ -196,6 +220,16 @@ const GLMaster = () => {
                         </tbody>
 
                     </table>
+
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
+                    </div>
 
                 </div>
 
