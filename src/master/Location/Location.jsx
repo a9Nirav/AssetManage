@@ -4,7 +4,7 @@ import { Button } from '@mui/material'
 import { useState, useEffect } from "react";
 import { IoSearch } from "react-icons/io5";
 
-import { FaEye } from "react-icons/fa";
+// import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from '@mui/material/Pagination';
@@ -17,13 +17,13 @@ import useSearch from '../../features/useSearch';
 
 
 import { LocationValidationSchema } from "../../features/validationSchemas";
-<<<<<<< HEAD
+
 // import { postData, getData } from "../../utils/apiClient.js";
-import {fetchLocations,createLocation} from "../../features/masterApi.js";
-=======
-import { postData, getData } from "../../utils/apiClient.js";
+
+
+
 import { fetchLocations, createLocation, updateLocation, deleteLocation } from "../../features/masterApi.js";
->>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
+
 import { useDispatch, useSelector } from 'react-redux';
 import usePagination from "../../features/usePagination"; // adjust path as needed
 
