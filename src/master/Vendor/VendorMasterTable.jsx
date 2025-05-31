@@ -1,8 +1,7 @@
 import { Button } from '@mui/material'
 import { React, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { IoSearch } from "react-icons/io5";
-
+import { IoSearch } from "react-icons/io5";git 
 import { toast, ToastContainer } from "react-toastify";
 import useSearch from '../../features/useSearch';
 import TableModal from '../../components/TableModal/TableModal';
@@ -16,108 +15,67 @@ import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from '@mui/material/Pagination';
-import {fetchUser} from "../../features/masterApi.js"
+import { fetchUser, fetchVendor } from "../../features/masterApi.js"
 import { useDispatch, useSelector } from 'react-redux';
 
-const vendors = [
-    {
-        id: 1,
-        vendorName: "ABC Supplies",
-        contactPerson: "John Doe",
-        phone: "123-456-7890",
-        email: "john@abc.com",
-        city: "New York",
-        department: "Procurement",
-        jobTitle:"admin"
-    },
-    {
-        id: 2,
-        vendorName: "XYZ Traders",
-        contactPerson: "Jane Smith",
-        phone: "987-654-3210",
-        email: "jane@xyz.com",
-        city: "Los Angeles",
-        department: "Logistics",
-        jobTitle:"admin"
-    },
-    {
-        id: 3,
-        vendorName: "Global Industries",
-        contactPerson: "Michael Johnson",
-        phone: "456-789-0123",
-        email: "michael@global.com",
-        city: "Chicago",
-        department: "Finance",
-        jobTitle:"admin"
-    },
-    {
-        id: 4,
-        vendorName: "Tech Solutions",
-        contactPerson: "Emily Brown",
-        phone: "789-012-3456",
-        email: "emily@tech.com",
-        city: "San Francisco",
-        department: "IT",
-        jobTitle:"admin"
-    },
-    {
-        id: 5,
-        vendorName: "Fresh Produce Ltd",
-        contactPerson: "David Wilson",
-        phone: "321-654-9870",
-        email: "david@fresh.com",
-        city: "Miami",
-        department: "Food Supply",
-        jobTitle:"admin"
-    }
-];
+
 
 
 const VendorMasterTable = () => {
- const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
- const user = useSelector(state => state.master.user)
+    const Vendors = useSelector(state => state.master.Vendors || [])
 
 
- useEffect(()=>{
-    dispatch(fetchUser())
- },[dispatch])
+    useEffect(() => {
+        dispatch(fetchVendor())
+    }, [dispatch])
 
- console.log(user)
 
-    const { searchQuery, setSearchQuery, filteredData } = useSearch(vendors);
+
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(Vendors);
     // Toast notification function
     const notify = () => toast.error("Delete Data");
-    
+
 
     // Modal 
     const [view, setView] = useState(false)
     const [MobalData, setMobalData] = useState({})
 
+
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
+
     return (
 
         <>
 
-        <ToastContainer/>
-
-
-        {
-            view && <TableModal {...{
-                setView,
-                MobalData,
-                title:"Company Modal"
-            }}
-            
-            />
-        }
- 
+            <ToastContainer />
 
 
             {
                 view && <TableModal {...{
                     setView,
                     MobalData,
-                    title: "User Details"
+                    title: "Company Modal"
+                }}
+
+                />
+            }
+
+
+
+            {
+                view && <TableModal {...{
+                    setView,
+                    MobalData,
+                    title: "Vendor Details"
                 }}
 
                 />
@@ -135,15 +93,28 @@ const VendorMasterTable = () => {
 
 
                 <div className="card shadow border-0 p-4 mt-3 table-responsive mt-3">
-                    {/* Search Box */}
-                    <div className="searchBox d-flex align-items-center w-25">
-                        <IoSearch className="mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search here..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
                     </div>
 
                     <table className="table table-bordered table-striped v-align mt-3">
@@ -152,29 +123,27 @@ const VendorMasterTable = () => {
 
                                 <th style={{ width: "10px" }}>No.</th>
                                 <th>Name</th>
-                                <th>Email</th>
+                                <th>Contact Person</th>
                                 <th>Phone</th>
-                                <th>Location</th>
-                                <th>Division</th>
-                                <th>Department</th>
-                                <th>Job Title</th>
+                                <th>Email</th>
+                                <th>City</th>
+
 
                                 <th>ACTION</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {filteredData.length > 0 ? (
-                                filteredData.map((vendor, index) => (
-                                    <tr key={vendor.id}>
+                            {paginatedData.length > 0 ? (
+                                paginatedData.map((vendor, index) => (
+                                    <tr key={vendor.rowNo}>
                                         <td>{index + 1}</td>
-                                        <td>{vendor.vendorName}</td>
-                                        <td>{vendor.contactPerson}</td>
-                                        <td>{vendor.phone}</td>
+                                        <td>{vendor.vdrName}</td>
+                                        <td>{vendor.cntctPerson}</td>
+                                        <td>{vendor.phoneNo}</td>
                                         <td>{vendor.email}</td>
                                         <td>{vendor.city}</td>
-                                        <td>{vendor.department}</td>
-                                        <td>{vendor.jobTitle}</td>
+
                                         <td>
                                             <div className="actions d-flex align-items-center">
 
@@ -215,10 +184,14 @@ const VendorMasterTable = () => {
 
 
 
-                    <div className="d-flex tableFooter">
-                        <p>showing <b>12</b> of <b>60</b> results</p>
-                        <Pagination count={10} color="primary" className="pagination"
-                            showFirstButton showLastButton />
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
                     </div>
 
                 </div>

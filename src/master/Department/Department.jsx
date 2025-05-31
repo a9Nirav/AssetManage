@@ -15,56 +15,35 @@ import useSearch from '../../features/useSearch';
 
 import { DepartmentValidationSchema } from "../../features/validationSchemas";
 import { useDispatch, useSelector } from 'react-redux';
-import { createDept, fetchDept } from '../../features/masterApi';
-
+import { createDept, fetchDept, fetchLocations } from '../../features/masterApi';
+import usePagination from "../../features/usePagination";
+import Pagination from '@mui/material/Pagination';
 
 const Department = () => {
 
     const dispatch = useDispatch()
-const Dept = useSelector((state) => state.master.Depts);
+    const Dept = useSelector((state) => state.master.Depts || []);
+
+    const locations = useSelector(state => state.master.locations);
 
 
 
 
-    const divisions = [
-        {
-            id: 1,
-            divisionName: "IT Department",
-            location: "New York",
-            description: "Responsible for managing the company's technology infrastructure and support."
-        },
-        {
-            id: 2,
-            divisionName: "Human Resources",
-            location: "Los Angeles",
-            description: "Handles recruitment, employee relations, and organizational development."
-        },
-        {
-            id: 3,
-            divisionName: "Finance",
-            location: "Chicago",
-            description: "Manages budgeting, financial planning, and accounting."
-        },
-        {
-            id: 4,
-            divisionName: "Marketing",
-            location: "San Francisco",
-            description: "Oversees branding, advertising, and market research strategies."
-        },
-        {
-            id: 5,
-            divisionName: "Operations",
-            location: "Houston",
-            description: "Ensures smooth execution of daily business processes."
-        }
-    ];
 
-    const { searchQuery, setSearchQuery, filteredData } = useSearch(divisions);
+
+
+
+
+
+
+
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(Dept);
 
     // form validation start
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(DepartmentValidationSchema),
@@ -87,10 +66,22 @@ const Dept = useSelector((state) => state.master.Depts);
         toast.success("Dept added successfully!");
 
 
-        reset();       // Clear the form
+
+        dispatch(fetchDept());
+        reset();
 
 
     };
+
+
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
 
 
     return (
@@ -115,21 +106,23 @@ const Dept = useSelector((state) => state.master.Depts);
                         <div className="row">
 
 
-                            <CustomInput label="Department Name" name="dept_Name" register={register} errors={errors} />
+                            <CustomInput label="Department Name" name="Dept_Name" register={register} errors={errors} />
 
                             <div className="col-md-6 mb-3">
                                 <label className="form-label">Location Name:</label>
                                 <select
-                                    className={`form-select form-control ${errors.loc_Code ? "is-invalid" : ""}`}
-                                    {...register("loc_Code")}
+                                    className={`form-select form-control ${errors.Loc_Code ? "is-invalid" : ""}`}
+                                    {...register("Loc_Code")}
                                     aria-label="Default select example"
                                 >
                                     <option value="">Select a location</option>
-                                    <option value="Mumbai">Mumbai</option>
-                                    <option value="Pune">Pune</option>
-                                    <option value="Bangalore">Bangalore</option>
+                                    {locations.map((loc) => (
+                                        <option key={loc.id} value={loc.locCode}>
+                                            {loc.locName}
+                                        </option>
+                                    ))}
                                 </select>
-                                <div className="invalid-feedback">{`Location  ${errors.loc_Code?.message}`}</div>
+                                <div className="invalid-feedback">{`Location  ${errors.Loc_Code?.message}`}</div>
 
                             </div>
 
@@ -138,12 +131,12 @@ const Dept = useSelector((state) => state.master.Depts);
                                 <label className="form-label">Description:</label>
                                 <textarea
                                     type="text"
-                                    className={` form-control ${errors.dept_Desc ? "is-invalid" : ""}`}
-                                    {...register("dept_Desc")}
+                                    className={` form-control ${errors.Dept_Desc ? "is-invalid" : ""}`}
+                                    {...register("Dept_Desc")}
 
                                     placeholder="Enter your name"
                                 />
-                                <div className="invalid-feedback">{`Description ${errors.dept_Desc?.message}`}</div>
+                                <div className="invalid-feedback">{`Description ${errors.Dept_Desc?.message}`}</div>
 
                             </div>
 
@@ -166,15 +159,28 @@ const Dept = useSelector((state) => state.master.Depts);
 
                 <div className="card shadow border-0 w-100  p-4 res-col table-responsive ">
 
-                    {/* Search Box */}
-                    <div className="searchBox d-flex align-items-center w-25">
-                        <IoSearch className="mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search here..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
                     </div>
 
                     <table className="table table-bordered table-striped v-align mt-3">
@@ -193,14 +199,14 @@ const Dept = useSelector((state) => state.master.Depts);
                         <tbody>
 
                             {
-                                filteredData.length > 0 ? (filteredData.map((a, index) => (
-                                    <tr key={a.id}>
+                                paginatedData.length > 0 ? (paginatedData.map((a, index) => (
+                                    <tr key={a.rowNo}>
 
 
                                         <td>{index + 1}</td>
-                                        <td>{a.divisionName}</td>
-                                        <td>{a.description}</td>
-                                        <td>{a.location}</td>
+                                        <td>{a.deptName}</td>
+                                        <td>{a.deptDesc}</td>
+                                        <td>{a.locName}</td>
 
 
                                         <td>
@@ -232,6 +238,16 @@ const Dept = useSelector((state) => state.master.Depts);
                         </tbody>
 
                     </table>
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
+                    </div>
+
 
                 </div>
 

@@ -78,57 +78,59 @@ const VendorMaster = () => {
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
-                            <CustomInput label="Vendor Name" name="vdr_Name" register={register} errors={errors} />
-                            <CustomInput label="Contact Person" name="cntct_Per" register={register} errors={errors} />
-                            <CustomInput label="Phone" name="phone_No" register={register} errors={errors} />
-                            <CustomInput label="Email" name="email" register={register} errors={errors} />
-                            <CustomInput label="Fax" name="fax_No" register={register} errors={errors} />
-                            <CustomInput label="Website" name="web_URL" register={register} errors={errors} />
+                            <CustomInput label="Vendor Name" name="Vdr_Name" register={register} errors={errors} />
+                            <CustomInput label="Contact Person" name="Cntct_Per" register={register} errors={errors} />
+                            <CustomInput label="Phone" name="Phone_No" register={register} errors={errors} />
+                            <CustomInput label="Email" name="Email" register={register} errors={errors} />
+                            <CustomInput label="Fax" name="Fax_No" register={register} errors={errors} />
+                            <CustomInput label="Website" name="Web_URL" register={register} errors={errors} />
 
 
-                            <CustomInput label="Country" name="country" register={register} errors={errors} />
-                            <CustomInput label="Address 1" name="addr1" register={register} errors={errors} />
-                            <CustomInput label="City" name="city" register={register} errors={errors} />
-                            <CustomInput label="Address 2" name="addr2" register={register} errors={errors} />
-                            <CustomInput label="PostalCode" name="posCode" register={register} errors={errors} />
-                            <CustomInput label="Address 3" name="addr3" register={register} errors={errors} />
-                            <CustomInput label="State" name="state" register={register} errors={errors} />
+                            <CustomInput label="Country" name="Country" register={register} errors={errors} />
+                            <CustomInput label="Address 1" name="Addr1" register={register} errors={errors} />
+                            <CustomInput label="City" name="City" register={register} errors={errors} />
+                            <CustomInput label="Address 2" name="Addr2" register={register} errors={errors} />
+                            <CustomInput label="PostalCode" name="PosCode" register={register} errors={errors} />
+                            <CustomInput label="Address 3" name="Addr3" register={register} errors={errors} />
+                            <CustomInput label="State" name="State" register={register} errors={errors} />
 
                             <div className="col-md-6 mb-3">
 
                                 <label className="form-label">Description:</label>
                                 <textarea
                                     type="text"
-                                    className={` form-control ${errors.vdr_Desc ? "is-invalid" : ""}`}
-                                    {...register("vdr_Desc")}
+                                    className={` form-control ${errors.Vdr_Desc ? "is-invalid" : ""}`}
+                                    {...register("Vdr_Desc")}
 
                                     placeholder="Enter your name"
                                 />
-                                <div className="invalid-feedback">{`Description ${errors.vdr_Desc?.message}`}</div>
+                                <div className="invalid-feedback">{`Description ${errors.Vdr_Desc?.message}`}</div>
 
                             </div>
 
-                            {/* <div className="col-md-6 mb-3">
-                                <input className={` me-2 ${errors.MtnVendor ? "is-invalid" : ""}`} type="checkbox" name='MtnVendor'  id="MtnVendor"
-                                    {...register("MtnVendor")}
+                             <div className="col-md-6 mb-3">
+                                <input className={` me-2 ${errors.MtnVndr ? "is-invalid" : ""}`} type="checkbox" name='MtnVndr'  id="MtnVendor"
+                                    {...register("MtnVndr")}
                                 />
                                 <label className="mb-0 me-2" for="MtnVendor">
                                     MtnVendor
                                 </label>
-                                <div className="invalid-feedback">{`check ${errors.MtnVendor?.message}`}</div>
+                                <div className="invalid-feedback">{`check ${errors.MtnVndr?.message}`}</div>
 
 
 
 
 
-                                <input className={` me-2 ${errors.MtnVendor ? "is-invalid" : ""}`} type="checkbox" name='supplier'  id="supplier"
-                                    {...register("supplier")}
+                                <input className={` me-2 ${errors.Supplier ? "is-invalid" : ""}`} type="checkbox" name='Supplier'  id="supplier"
+                                    {...register("Supplier")}
                                 />
                                 <label className="mb-0 me-2" for="supplier">
                                   supplier
                                 </label>
-                                <div className="invalid-feedback">{`check ${errors.supplier?.message}`}</div>
-                            </div> */}
+                                <div className="invalid-feedback">{`check ${errors.Supplier?.message}`}</div>
+
+                                
+                            </div> 
 
                         </div>
 

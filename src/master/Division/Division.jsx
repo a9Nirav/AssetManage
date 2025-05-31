@@ -11,21 +11,25 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import { FaUpload } from "react-icons/fa6";
+import useSearch from '../../features/useSearch';
+import { IoSearch } from "react-icons/io5";
 
 
 import { DivisionValidationSchema } from "../../features/validationSchemas";
 import { useDispatch, useSelector } from 'react-redux';
-import { createDivi,fetchDivi } from '../../features/masterApi';
-
+import { createDivi, fetchDivi } from '../../features/masterApi';
+import usePagination from "../../features/usePagination";
 
 const Division = () => {
     const dispatch = useDispatch();
-    const division = useSelector(state => state.master.Divi)
-console.log('division'+division)
+    const division = useSelector((state) => state.master.divis || [])
+    const locations = useSelector(state => state.master.locations);
+    console.log('division' + division)
     // React Hook Form Setup
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
 
     } = useForm({
@@ -34,15 +38,33 @@ console.log('division'+division)
     });
 
 
-    useEffect(()=>{
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(division);
+
+
+    useEffect(() => {
         dispatch(fetchDivi())
-    },[dispatch])
+    }, [dispatch])
 
     const onSubmit = async (data) => {
         await dispatch(createDivi(data)).unwrap();
         console.log("Form Data:", data);
         toast.success("Submit Data Success");
+        dispatch(fetchDivi())
+        reset()
+
     };
+
+
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
+
+    
     return (
         <>
             <ToastContainer />
@@ -63,8 +85,25 @@ console.log('division'+division)
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
-                            <CustomInput label="Division" name="div_Name" register={register} errors={errors} />
-                            <CustomInput label="Description" name="div_Desc" register={register} errors={errors} />
+                            <CustomInput label="Division" name="Div_Name" register={register} errors={errors} />
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">Location Name:</label>
+                                <select
+                                    className={`form-select form-control ${errors.Loc_Code ? "is-invalid" : ""}`}
+                                    {...register("Loc_Code")}
+                                    aria-label="Default select example"
+                                >
+                                    <option value="">Select a location</option>
+                                    {locations.map((loc) => (
+                                        <option key={loc.id} value={loc.locCode}>
+                                            {loc.locName}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="invalid-feedback">{`Location  ${errors.Loc_Code?.message}`}</div>
+
+                            </div>
+                            <CustomInput label="Description" name="Div_Desc" register={register} errors={errors} />
 
                         </div>
 
@@ -79,13 +118,37 @@ console.log('division'+division)
 
 
                 <div className="card shadow border-0 w-100  p-4 res-col">
-                    <table className="table table-bordered table-striped v-align">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
+                    </div>
+                    <table className="table table-bordered table-striped v-align mt-3">
                         <thead className="thead-dark">
                             <tr>
 
                                 <th style={{ width: "10px" }}>No.</th>
                                 <th>Name</th>
                                 <th>Description</th>
+                                <th>Location</th>
                                 <th>action</th>
 
                             </tr>
@@ -93,28 +156,37 @@ console.log('division'+division)
 
                         <tbody>
 
-
-                            <tr>
-
-
-                                <td>1	</td>
-                                <td>Mumbai</td>
-                                <td>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Culpa, dolore?</td>
+                            {
+                                paginatedData.length > 0 ? (paginatedData.map((a, index) => (
+                                    <tr key={a.rowNo}>
 
 
-                                <td>
-                                    <div className="actions d-flex align-items-center">
-                                        {/* <Link to="/">
-                       
-                            <Button className="secondary" color="secondary"><FaEye /></Button>
-                     
-                    </Link> */}
-                                        <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
+                                        <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                        <td>{a.divName}</td>
+                                        <td>{a.divDesc}</td>
+                                        <td>{a.locName}</td>
 
-                                        <Button className="error" color="error"><MdDelete /></Button>
-                                    </div>
-                                </td>
-                            </tr>
+
+                                        <td>
+                                            <div className="actions d-flex align-items-center">
+                                                <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
+
+                                                <Button className="error" color="error"><MdDelete /></Button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))) : (
+                                    <tr>
+                                        <td colSpan="8" className="text-center">
+                                            No results found
+                                        </td>
+                                    </tr>
+
+                                )
+                            }
+
+
+
 
 
 
@@ -124,6 +196,15 @@ console.log('division'+division)
                         </tbody>
 
                     </table>
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
+                    </div>
 
                 </div>
 

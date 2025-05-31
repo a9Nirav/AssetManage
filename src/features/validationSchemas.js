@@ -1,9 +1,14 @@
 import * as yup from "yup";
+<<<<<<< HEAD
 const name1 = yup
   .string()
   .matches(/^[A-Za-z]+$/, "Only alphabets are allowed")
   .required("is required");
 const required = yup.string().required("is required");
+=======
+const name1 = yup.string().matches(/^[A-Za-z\s]+$/, "Only alphabets and spaces are allowed").required("is required");
+const required = yup.string().required("is required")
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 const email = yup.string().email("Invalid email").required("is required");
 const urlRegex = /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?$/;
 const number = yup
@@ -30,6 +35,7 @@ export const userValidationSchema = yup.object().shape({
   div_Code: yup.string().required("Division is required"),
   dept_Code: yup.string().required("Department is required"),
 
+<<<<<<< HEAD
   // Apply validation only when `userType` is "login"
   userType: yup.string().required("User type is required"),
 
@@ -63,9 +69,45 @@ export const userValidationSchema = yup.object().shape({
   //         schema.oneOf([yup.ref("password"), null], "Passwords must match").required("Confirm Password is required"),
   //     otherwise: (schema) => schema.notRequired(),
   // }),
+=======
+    // Apply validation only when `userType` is "login"
+    login: yup.boolean(),
+    services: yup.boolean(),
+
+
+    userid: yup.string().when("login", {
+      
+        then: (schema) => schema.required("User ID is required"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+
+    rollid: yup.string().when("login", {
+   
+        then: (schema) => schema.required("Role is required"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+
+    userPwd: yup.string().when("login", {
+    
+        then: (schema) =>
+            schema.matches(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                "Password must be at least 8 characters long, include one uppercase, one lowercase, one number, and one special character."
+            ).required("Password is required"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+
+    confirmPassword: yup.string().when("login", {
+      
+        then: (schema) =>
+            schema.oneOf([yup.ref("password"), null], "Passwords must match").required("Confirm Password is required"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 });
 
 export const vendorValidationSchema = yup.object().shape({
+<<<<<<< HEAD
   vdr_Name: name1,
   vdr_Desc: required,
   cntct_Per: name1,
@@ -100,9 +142,32 @@ export const vendorValidationSchema = yup.object().shape({
   // supplier: yup
   // .boolean()
   // .oneOf([true],"supplier Required") ,
+=======
+    Vdr_Name: name1,
+    Vdr_Desc: required,
+    Cntct_Per: required,
+    Phone_No: Phone,
+    Email: email,
+    Fax_No: yup.string().matches(/^(\+?\d{1,4}[-\s]?)?(\d{3}[-\s]?\d{3}[-\s]?\d{4})$/, "Invalid fax number format").required(" number is required"),
+    Web_URL: yup.string().matches(urlRegex, "Invalid URL format").required("Website URL is required"),
+    // AccountUnit:number,
+    // VisibilityPin:number,
+    Country: name1,
+    Addr1: required,
+    Addr2: required,
+    Addr3: required,
+    City: name1,
+    PosCode: yup.string().matches(/^[A-Za-z0-9]{5,10}$/, "Invalid postal code format").required("Please enter the postal code"),
+    State: name1,
+    MtnVndr: yup.boolean(),
+    Supplier: yup.boolean()
+
+
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 });
 
 export const CompnayValidationSchema = yup.object().shape({
+<<<<<<< HEAD
   companyName: name1,
   ContactPerson: name1,
   Phone: Phone,
@@ -146,6 +211,29 @@ export const CompnayValidationSchema = yup.object().shape({
     .required("File is required"),
   SigningAuthority: number,
 });
+=======
+    companyName: name1,
+    ContactPerson: name1,
+    Phone: Phone,
+    Email: email,
+    fax: yup.string().matches(/^(\+?\d{1,4}[-\s]?)?(\d{3}[-\s]?\d{3}[-\s]?\d{4})$/, "Invalid fax number format").required(" number is required"),
+    website: yup.string().matches(urlRegex, "Invalid URL format").required("Website URL is required"),
+    AccountUnit: number,
+    VisibilityPin: number,
+    Country: name1,
+    Address1: required,
+    Address2: required,
+    Address3: required,
+    City: name1,
+    PostalCode: yup.string().matches(/^[A-Za-z0-9]{5,10}$/, "Invalid postal code format").required("Please enter the postal code"),
+    State: name1,
+    BillingAddress: required,
+    ShippingAddress: required,
+    image: yup.mixed().test("fileType", "Only image files are allowed (JPG, PNG, GIF, BMP, WEBP)", (value) => {
+        return value && value[0]?.name?.match(/^.*\.(jpg|jpeg|png|gif|bmp|webp)$/i);
+    }).required("File is required"),
+    SigningAuthority: number,
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 
 export const LocationValidationSchema = yup.object().shape({
   LocName: required,
@@ -348,6 +436,7 @@ export const AssetRepairSchemas = yup.object().shape({
 });
 
 
+<<<<<<< HEAD
 export const ReplacementsSchemas = yup.object().shape({
   AssetName: required,
   barCode: required,
@@ -365,11 +454,25 @@ export const ConsumableSchemas = yup.object().shape({
   Dept:required,
   Division:required,
   User:required,
+=======
+export const LocationValidationSchema = yup.object().shape({
+    Loc_Name: required,
+    Loc_Desc: required,
+
+})
+
+
+export const DivisionValidationSchema = yup.object().shape({
+    Div_Name: required,
+    Div_Desc: required,
+    Loc_Code: required,
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 
  
 });
 
 
+<<<<<<< HEAD
 export const DisposeAssetSchemas = yup.object().shape({
  
   AssetName:required,
@@ -386,6 +489,12 @@ export const DisposeAssetSchemas = yup.object().shape({
   DisPoseDate: yup.date()
     .transform((value, originalValue) => (originalValue === "" ? null : value)),
   Remarks:required
+=======
+export const GLValidationSchema = yup.object().shape({
+    GL_Type: required,
+    Account_Desc: required,
+    AccountCode: required,
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 
 
  
@@ -421,6 +530,7 @@ export const ScheduleDetailsSchemas = yup.object().shape({
 
 
 
+<<<<<<< HEAD
 export const  SurveySchemas = yup.object().shape({
  
   SurveyLocation:required,
@@ -434,11 +544,38 @@ export const  SurveySchemas = yup.object().shape({
 
 
 }); 
+=======
+export const AssetTypeValidationSchema = yup.object().shape({
+    AssetType: required,
+    Description: required,
+    Method: required,
+    DepSalvageValue: number,
+    RecoveryRate: number,
+
+})
+
+
+export const AssetMasterValidationSchema = yup.object().shape({
+    AssetName: required,
+    AssetType: required,
+    manufacturer: required,
+    Price: number,
+    GLType: required,
+    assetType: yup
+        .string()
+        .oneOf(["Consumable", "FixedAsset", "GroupAsset"], "Please select an asset type")
+        .required("Please select an asset type"),
+    Description: required,
+
+
+})
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 
 
 
 export const  DepreciationDetailsSchemas = yup.object().shape({
 
+<<<<<<< HEAD
 AssetName:required,
 Asset:required,
 AssetType:required,
@@ -450,6 +587,62 @@ acquisitionDate: yup.date()
     .transform((value, originalValue) => (originalValue === "" ? null : value)),
 
 BookType:required,
+=======
+
+export const DepartmentValidationSchema = yup.object().shape({
+    Dept_Name: required,
+    Loc_Code: required,
+    Dept_Desc: required,
+
+})
+
+
+export const TaxValidationSchema = yup.object().shape({
+    Taxname: required,
+    Percentage: number,
+})
+
+
+
+// transction validation 
+export const assetAllocation = yup.object().shape({
+    AssetType: required,
+    Asset: required,
+    AssetName: required,
+    tag: required,
+    SerialNo: required,
+    barCode: required,
+    vendorName: required,
+    acquisitionDate: required,
+    expiryDate: required,
+    assetType1: yup.string().oneOf(["leased", ""]),
+
+    leasedStart: yup.date().when("assetType1", {
+        is: "leased",
+        then: schema => schema.required("Leased Start is required"),
+        otherwise: schema => schema.nullable(),
+    }),
+    leasedEnd: yup.date().when("assetType1", {
+        is: "leased",
+        then: schema => schema.required("Leased End is required"),
+        otherwise: schema => schema.nullable(),
+    }),
+
+
+    warranty: required,
+
+    cost: yup.number()
+        .typeError('Cost value must be a number')
+        .required('Cost value is required')
+        .positive('Cost value must be greater than zero')
+        .max(10000000, 'Cost value cannot exceed 1 crore'),
+    purValue: yup.number()
+        .typeError('Purchase value must be a number')
+        .required('Purchase value is required')
+        .positive('Purchase value must be greater than zero')
+        .max(10000000, 'Purchase value cannot exceed 1 crore'),
+    image: yup.mixed().required("Image is required"),
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 
 
 
@@ -458,3 +651,35 @@ BookType:required,
 
 
 
+<<<<<<< HEAD
+=======
+export const step1Schema = yup.object().shape({
+    PoRefNo: number,
+    // SigningAuthority:required,
+    // PoNo:required,
+    // Fax: yup.string().matches(/^(\+?\d{1,4}[-\s]?)?(\d{3}[-\s]?\d{3}[-\s]?\d{4})$/, "Invalid fax number format").required(" number is required"),
+    // CreateDate:required,
+    // ContactPerson:required,
+    // Phone:Phone,
+    // Address:required,
+    // Remarks:required,
+    // Terms:required,
+    // vendorName:required,
+    // Location:required,
+    // Division:required,
+    // Department:required,
+    // Allocate:required,
+
+
+})
+
+
+export const step2Schema = yup.object().shape({
+    // Items:required,
+    // cost:number,
+    // quantity:number,
+
+})
+
+
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b

@@ -225,10 +225,10 @@ header .part2 {
 .searchBox {
   width: 500px;
   height: 40px;
-  background: #1C1C1C;
+  background: #f2f2f2;
   border-radius: 6px;
   padding: 3px 15px;
-  color: #ffffff;
+ 
 }
 
 body.dark .searchBox {
@@ -241,11 +241,11 @@ body.dark .searchBox {
   outline: none;
   padding-left: 0px;
   font-size: 14px;
-  color: #ffffff;
+  color: #000000;
 }
 
 .searchBox input::-webkit-input-placeholder {
-  color: #E9BD51;
+  color: #000000;
 }
 
 body.dark .searchBox input,
@@ -256,7 +256,16 @@ body.dark .searchBox svg {
 
 .searchBox svg {
   font-size: 18px;
-  color: #ffffff;
+  color: #000000;
+}
+
+.pagerow{
+  background-color: #f2f2f2;
+  padding: 3px;
+  width: 50px;
+  border-radius: 6px;
+  text-align: center;
+
 }
 
 .myAcc {

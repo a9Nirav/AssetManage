@@ -11,58 +11,28 @@ import { FaUpload } from "react-icons/fa6";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import { toast, ToastContainer } from "react-toastify";
 import useSearch from '../../features/useSearch';
+import Pagination from '@mui/material/Pagination';
 
 import { TaxValidationSchema } from "../../features/validationSchemas";
 import { useDispatch, useSelector } from 'react-redux';
 import { createTaxMaster, fetchTaxMaster } from '../../features/masterApi';
+import usePagination from "../../features/usePagination";
 
 const TaxMaster = () => {
 
     const dispatch = useDispatch();
-    const taxMasters = useSelector(state => state.master.taxMaster)
+    const taxMasters = useSelector(state => state.master.Taxs || [])
     console.log(taxMasters)
 
-     useEffect(() => {
-            dispatch(fetchTaxMaster());
-           
-          }, [dispatch]);
+    useEffect(() => {
+        dispatch(fetchTaxMaster());
+
+    }, [dispatch]);
 
 
 
-    const divisions = [
-        {
-            id: 1,
-            divisionName: "IT Department",
-            location: "New York",
-            description: "Responsible for managing the company's technology infrastructure and support."
-        },
-        {
-            id: 2,
-            divisionName: "Human Resources",
-            location: "Los Angeles",
-            description: "Handles recruitment, employee relations, and organizational development."
-        },
-        {
-            id: 3,
-            divisionName: "Finance",
-            location: "Chicago",
-            description: "Manages budgeting, financial planning, and accounting."
-        },
-        {
-            id: 4,
-            divisionName: "Marketing",
-            location: "San Francisco",
-            description: "Oversees branding, advertising, and market research strategies."
-        },
-        {
-            id: 5,
-            divisionName: "Operations",
-            location: "Houston",
-            description: "Ensures smooth execution of daily business processes."
-        }
-    ];
 
-    const { searchQuery, setSearchQuery, filteredData } = useSearch(divisions);
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(taxMasters);
 
 
 
@@ -81,6 +51,16 @@ const TaxMaster = () => {
 
         toast.success("Submit Data Success");
     };
+
+
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
 
 
     return (
@@ -105,8 +85,8 @@ const TaxMaster = () => {
                         <div className="row">
 
 
-                            <CustomInput label="Tax Name" name="taxname" register={register} errors={errors} />
-                            <CustomInput label="Percentage (%)" name="percentage" register={register} errors={errors} />
+                            <CustomInput label="Tax Name" name="Taxname" register={register} errors={errors} />
+                            <CustomInput label="Percentage (%)" name="Percentage" register={register} errors={errors} />
 
 
 
@@ -130,16 +110,28 @@ const TaxMaster = () => {
 
                 <div className="card shadow border-0 w-100  p-4 res-col table-responsive ">
 
-                    {/* Search Box */}
-                    <div className="searchBox d-flex align-items-center w-25 w-sm-100">
-                        <IoSearch className="mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search here..."
-                            value={searchQuery}
-                            className='w-100'
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
                     </div>
 
                     <table className="table table-bordered table-striped v-align mt-3">
@@ -147,9 +139,9 @@ const TaxMaster = () => {
                             <tr>
 
                                 <th style={{ width: "10px" }}>No.</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Location </th>
+                                <th>Tax Name</th>
+                                <th>Percentage</th>
+
                                 <th>action</th>
 
                             </tr>
@@ -158,14 +150,14 @@ const TaxMaster = () => {
                         <tbody>
 
                             {
-                                filteredData.length > 0 ? (filteredData.map((a, index) => (
-                                    <tr key={a.id}>
+                                paginatedData.length > 0 ? (paginatedData.map((a, index) => (
+                                    <tr key={a.rowNo}>
 
 
                                         <td>{index + 1}</td>
-                                        <td>{a.divisionName}</td>
-                                        <td>{a.description}</td>
-                                        <td>{a.location}</td>
+                                        <td>{a.taxName}</td>
+                                        <td>{a.percentage}</td>
+
 
 
                                         <td>
@@ -197,6 +189,16 @@ const TaxMaster = () => {
                         </tbody>
 
                     </table>
+
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
+                    </div>
 
                 </div>
 

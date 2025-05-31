@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@mui/material'
 import { useState, useEffect } from "react";
+import { IoSearch } from "react-icons/io5";
 
 import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
@@ -12,54 +13,47 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import { FaUpload } from "react-icons/fa6";
+import useSearch from '../../features/useSearch';
 
 
 import { LocationValidationSchema } from "../../features/validationSchemas";
+<<<<<<< HEAD
 // import { postData, getData } from "../../utils/apiClient.js";
 import {fetchLocations,createLocation} from "../../features/masterApi.js";
+=======
+import { postData, getData } from "../../utils/apiClient.js";
+import { fetchLocations, createLocation, updateLocation, deleteLocation } from "../../features/masterApi.js";
+>>>>>>> 66fa470394764b72a21678c82cbaeab99111ad1b
 import { useDispatch, useSelector } from 'react-redux';
+import usePagination from "../../features/usePagination"; // adjust path as needed
+
 
 
 
 const Location = () => {
+
+
+
+
+
+
     const dispatch = useDispatch();
     // const { locations, loading } = useSelector(state => state.location);
     const locations = useSelector(state => state.master.locations);
-
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(locations);
     // const [locations, setLocations] = useState([]);
-    const [editId, setEditId] = useState(null);
+    const [editId, setEditId] = useState("");
 
     useEffect(() => {
         dispatch(fetchLocations());
-       
-      }, [dispatch]);
+
+    }, [dispatch]);
 
 
 
-    // Pre-fill form when editing
-    const startEdit = (loc) => {
-        setEditId(loc.id);
-        setValue("LocName", loc.LocName); // from react-hook-form
-        setValue("LocDesc", loc.LocDesc);
-
-    };
 
 
-    
 
-
-    // useEffect(() => {
-    //     const fetchLocations = async () => {
-    //         try {
-    //             const response = await getData('location'); // Replace with your actual endpoint
-    //             setLocations(response);
-    //         } catch (error) {
-    //             toast.error("Failed to fetch locations");
-    //         }
-    //     };
-
-    //     fetchLocations();
-    // }, []);
 
     // React Hook Form Setup
     const {
@@ -72,19 +66,27 @@ const Location = () => {
         resolver: yupResolver(LocationValidationSchema),
     });
 
+    // Pre-fill form when editing
+    const startEdit = (loc) => {
+        setEditId(loc.locCode);
+        setValue("Loc_Name", loc.locName);
+        setValue("Loc_Desc", loc.locDesc);
+        console.log("hello")
+
+
+    };
+    console.log(editId)
 
 
 
-    // const onSubmit = async (data) => {
-    //     try {
-    //         // const response = await postData('location', data); // 'add-location' is your API endpoint
-    //         // console.log("API Location:", response);
-    //         dispatch(createLocation(data));
-    //         toast.success("Location added successfully!");
-    //     } catch (error) {
-    //         toast.error("Failed to add location.");
-    //     }
-    // };
+    const {
+        currentPage,
+        rowsPerPage,
+        handlePageChange,
+        handleRowsPerPageChange,
+        paginatedData,
+        totalPages
+    } = usePagination(filteredData, 5);
 
 
 
@@ -92,95 +94,55 @@ const Location = () => {
 
     const onSubmit = async (data) => {
         try {
-          if (editId) {
-            await dispatch(updateLocation({ id: editId, data })).unwrap();
-            toast.success("Location updated successfully!");
-          } else {
-            await dispatch(createLocation(data)).unwrap();
-            toast.success("Location added successfully!");
-          }
-      
-          reset();       // Clear the form
-          setEditId(null); // Exit edit mode
+            let response;
+            if (editId) {
+            let response1 = await dispatch(updateLocation({ locCode: editId, data })).unwrap();
+                toast.success(response1?.errorDescription ||"Location ");
+                console.log(response1)
+            } else {
+              response =  await dispatch(createLocation(data)).unwrap();
+                toast.success(response?.errorDescription || "Location added successfully!");
+              console.log(response)
+               
+            }
+
+            reset();         // Clear the form
+            setEditId(null); // Exit edit mode
+            dispatch(fetchLocations()); // Refresh list
         } catch (error) {
-          toast.error("Operation failed");
+            console.error("Submission error:", error);  // Debugging aid
+            toast.error(error);
+
         }
-      };
-      
-
-    // const onSubmit = async (data) => {
-    //     try {
-    //         if (editId) {
-    //             await putData(`location/${editId}`, data); // endpoint with ID
-    //             toast.success("Location updated successfully!");
-    //         } else {
-    //             await postData("location", data);
-    //             toast.success("Location added successfully!");
-    //         }
-    //         setEditId(null);
-    //         reset(); // clear form
-    //         fetchLocations(); // refresh list
-    //     } catch (error) {
-    //         toast.error("Operation failed");
-    //     }
-    // };
+    };
 
 
-    // useEffect(() => {
-      
-    //     axios
-    //       .post("https://673ae9bc339a4ce44519af97.mockapi.io/location/", {
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //       })
-    //       .then((response) => {
-    //         console.log("✅ API response:", response.data);
-    //         // setUsers(response.data.data); // Adjust based on API structure
-    //       console.log(response)
-    //       })
-    //       .catch((error) => {
-    //         console.error("❌ API error:", error.message);
-    //       });
-    //   }, []);
+    const handleDelete = async (locCode) => {
+        if (window.confirm("Are you sure you want to delete this location?")) {
+            try {
+                await dispatch(deleteLocation(locCode)).unwrap();
+                toast.success("Location deleted successfully!");
+                dispatch(fetchLocations());
+            } catch (errorMessage) {
+                toast.error(errorMessage); // Show custom error from API
+                console.error("Delete error:", errorMessage);
+            }
+        }
+    };
 
 
-      
 
-    //   const [users, setUsers] = useState([]);
-    // useEffect(() => {
-    //     const body = {
-    //       UserId: "string",
-    //       ComCode: "001",
-    //       RowStart: "0",
-    //       NoOfRec: "0",
-    //     };
-    
-    //     axios
-    //       .post("https://localhost:7134/API/SAM/SAM_GetLocationDetails", body, {
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //       })
-    //       .then((response) => {
-    //         console.log("✅ API response:", response.data);
-    //         setUsers(response.data.data); // Adjust based on API structure
-    //       })
-    //       .catch((error) => {
-    //         console.error("❌ API error:", error.message);
-    //       });
-    //   }, []);
-    
-    
+
+
 
 
     return (
         <>
             <ToastContainer />
             <div className='right-content w-100'>
-            <div>
-    
-    </div>
+                <div>
+
+                </div>
 
                 <div className="card shadow border-0 w-100  p-4 res-col ">
                     <div className="d-flex justify-content-between algin-content-center align-items-center">
@@ -196,15 +158,15 @@ const Location = () => {
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
-                            <CustomInput label="Location" name="LocName" register={register} errors={errors} />
-                            <CustomInput label="Description" name="LocDesc" register={register} errors={errors} />
+                            <CustomInput label="Location" name="Loc_Name" register={register} errors={errors} />
+                            <CustomInput label="Description" name="Loc_Desc" register={register} errors={errors} />
 
-                            
+
 
                         </div>
 
                         {/* Submit Button */}
-                        <button type="submit" className="btn btn-dark w-25 mt-3">
+                        <button type="submit" className="btn btn-dark  mt-3">
                             Submit
                         </button>
                     </form>
@@ -214,7 +176,31 @@ const Location = () => {
 
 
                 <div className="card shadow border-0 w-100  p-4 res-col">
-                    <table className="table table-bordered table-striped v-align">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="searchBox d-flex align-items-center w-25">
+                            <IoSearch className="mr-2" />
+                            <input
+                                type="text"
+                                placeholder="Search here..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="ms-3 d-flex align-items-center">
+                            <label className="me-2">No. Of Records</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={rowsPerPage}
+                                onChange={handleRowsPerPageChange}
+                                className="pagerow"
+
+                            />
+                        </div>
+                    </div>
+
+                    <table className="table table-bordered table-striped v-align mt-3">
                         <thead className="thead-dark">
                             <tr>
 
@@ -230,9 +216,9 @@ const Location = () => {
 
 
 
-                            {locations.map((loc, index) => (
+                            {paginatedData.map((loc, index) => (
                                 <tr key={loc.id || index}>
-                                    <td>{index + 1}</td>
+                                    <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
                                     <td>{loc.locName}</td>
                                     <td>{loc.locDesc}</td>
                                     <td>
@@ -240,7 +226,7 @@ const Location = () => {
                                             <Link to="">
                                                 <Button className="success" color="success" onClick={() => startEdit(loc)}><FaPencilAlt /></Button>
                                             </Link>
-                                            <Button className="error" color="error"><MdDelete /></Button>
+                                            <Button className="error" color="error" onClick={() => handleDelete(loc.locCode)}><MdDelete /></Button>
                                         </div>
                                     </td>
                                 </tr>
@@ -250,6 +236,17 @@ const Location = () => {
                         </tbody>
 
                     </table>
+
+                    <div className="d-flex justify-content-center mt-3">
+                        <Pagination
+                            count={totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                        />
+                    </div>
+
 
                 </div>
 
