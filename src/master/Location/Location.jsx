@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@mui/material'
 import { useState, useEffect } from "react";
@@ -15,7 +15,7 @@ import { FaUpload } from "react-icons/fa6";
 
 
 import { LocationValidationSchema } from "../../features/validationSchemas";
-import { postData, getData } from "../../utils/apiClient.js";
+// import { postData, getData } from "../../utils/apiClient.js";
 import {fetchLocations,createLocation} from "../../features/masterApi.js";
 import { useDispatch, useSelector } from 'react-redux';
 

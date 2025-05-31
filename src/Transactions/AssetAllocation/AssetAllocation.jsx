@@ -159,8 +159,8 @@ const AssetAllocation = () => {
               )}
 
 
-              <CustomInput label="Warranty Expiry Date" type='date' name="warranty" register={register} errors={errors} />
-              <CustomInput label="Purchase Value" name="purValue" register={register} errors={errors} />
+              <CustomInput label="Warranty Expiry Date" type='date' name="fromDate" register={register} errors={errors} />
+              <CustomInput label="Purchase Value" name="toData" register={register} errors={errors} />
 
 
               <div className="col-md-6 mb-3">

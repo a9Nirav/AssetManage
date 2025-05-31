@@ -24,6 +24,17 @@ import VendorMasterTable from './master/Vendor/VendorMasterTable';
 import AssetAllocation from './Transactions/AssetAllocation/AssetAllocation'
 import ViewAssetAlloction from './Transactions/AssetAllocation/ViewAssetAllocation';
 import PurchaseOrder from './Transactions/PurchaseOrder/PurchaseOrder';
+import ContractEntry from './Transactions/ContractEntry/ContractEntry';
+import InsuranceEntry from './Transactions/InsuranceEntery/InsuranceEntery';
+import AssetTransfer from './Transactions/AssetTransfer/AssetTransfer';
+import AssetRepair from './Transactions/AssetRepair/AssetRepair';
+import Replacements from './Transactions/Replacements/Replacements';
+import ConsumableIssue from './Transactions/ConsumableIssue/ConsumableIssue';
+import DisposeAsset from './Transactions/DisposeAsset/DisposeAsset';
+import ScheduleGenerator from './Transactions/ScheduleGenerator/ScheduleGenerator';
+import ScheduleDetails from './Transactions/ScheduleDetails/ScheduleDetails';
+import Survey from './Transactions/Survey/Survey';
+import DepreciationDetails from './Transactions/DepreciationDetails/DepreciationDetails';
 
 
 const MyContext = createContext();
@@ -114,6 +125,18 @@ function App() {
                <Route path="/Transactions/AssetAlloction" element={<AssetAllocation/>} />
               <Route path="/Transactions/ViewAssetAlloction" element={<ViewAssetAlloction/>} />
               <Route path="/Transactions/PurchaseOrder" element={<PurchaseOrder/>} />
+              <Route path="/Transactions/ContractEntry" element={<ContractEntry/>} />
+              <Route path="/Transactions/InsuranceEntry" element={<InsuranceEntry/>} />
+              <Route path="/Transactions/AssetTransfer" element={<AssetTransfer/>} />
+              <Route path="/Transactions/AssetRepair" element={<AssetRepair/>} />
+              <Route path="/Transactions/Replacements" element={<Replacements/>} />
+              <Route path="/Transactions/ConsumableIssue" element={<ConsumableIssue/>} />
+              <Route path="/Transactions/DisposeAsset" element={<DisposeAsset/>} />
+              <Route path="/Transactions/ScheduleGenerator" element={<ScheduleGenerator/>} />
+              <Route path="/Transactions/ScheduleDetails" element={<ScheduleDetails/>} />
+               <Route path="/Transactions/Survey" element={<Survey/>} />
+                <Route path="/Transactions/DepreciationDetails" element={<DepreciationDetails/>} />
+
 
 
 

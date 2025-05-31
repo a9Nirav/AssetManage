@@ -1,32 +1,32 @@
 import Button from '@mui/material/Button';
 import { MdDashboard } from "react-icons/md";
 import { FaAngleRight } from "react-icons/fa6";
-import { FaProductHunt } from "react-icons/fa";
-import { FaCartArrowDown } from "react-icons/fa6";
-import { MdMessage } from "react-icons/md";
+// import { FaProductHunt } from "react-icons/fa";
+// import { FaCartArrowDown } from "react-icons/fa6";
+// import { MdMessage } from "react-icons/md";
 import { FaBell } from "react-icons/fa6";
 import { IoIosSettings } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { IoMdLogOut } from "react-icons/io";
-import { FaUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";    
 import { MdWorkspacePremium } from "react-icons/md";  
 import { HiPuzzle } from "react-icons/hi";  
 import { FaUserAlt } from "react-icons/fa";
-import { FaLocationArrow } from "react-icons/fa";
-import { MdSell } from "react-icons/md";
-import { HiBriefcase } from "react-icons/hi";
-import { IoLogoAmplify } from "react-icons/io5";
-import { FaCodepen } from "react-icons/fa6";
-import { FaIndianRupeeSign } from "react-icons/fa6";
-import { AiFillAppstore } from "react-icons/ai";
-import { HiMiniPaperAirplane } from "react-icons/hi2";
-// import { AiFillOpenAI } from "react-icons/ai";
-import { FaBookOpen } from "react-icons/fa";
-import { RiBankFill } from "react-icons/ri";
+// import { FaLocationArrow } from "react-icons/fa";
+// import { MdSell } from "react-icons/md";
+// import { HiBriefcase } from "react-icons/hi";
+// import { IoLogoAmplify } from "react-icons/io5";
+// import { FaCodepen } from "react-icons/fa6";
+// import { FaIndianRupeeSign } from "react-icons/fa6";
+// import { AiFillAppstore } from "react-icons/ai";
+// import { HiMiniPaperAirplane } from "react-icons/hi2";
+// // import { AiFillOpenAI } from "react-icons/ai";
+// import { FaBookOpen } from "react-icons/fa";
+// import { RiBankFill } from "react-icons/ri";
 
 
-import { IoMdArrowRoundForward } from "react-icons/io";
+// import { IoMdArrowRoundForward } from "react-icons/io";
 
 const SideBar = () => {
 
@@ -99,9 +99,20 @@ const SideBar = () => {
                     </Button>
                     <div className={`submenuWrapper ${isTransactionsSubmenuOpen ? 'colapse' : 'colapsed'}`}>
                         <ul className='submenu'>
-                            <li><Link to="/Transactions/AssetAlloction">Asset Allocation</Link></li>
-                            <li><Link to="/">Product View</Link></li>
-                            <li><Link to="/">Product Upload</Link></li>
+                            <li><Link to="/Transactions/AssetAlloction"> Asset Allocation</Link></li>
+                             <li><Link to="/Transactions/PurchaseOrder"> Purchase Order</Link></li>
+                             <li><Link to="/Transactions/ContractEntry"> Contract Entry</Link></li>
+                            <li><Link to="/Transactions/InsuranceEntry"> Insurance Entry</Link></li>
+                            <li><Link to="/Transactions/AssetTransfer"> Asset Transfer</Link></li>
+                            <li><Link to="/Transactions/AssetRepair"> Asset Repair</Link></li>
+                            <li><Link to="/Transactions/Replacements"> Replacements</Link></li>
+                            <li><Link to="/Transactions/ConsumableIssue"> Consumable Issue</Link></li>
+                            <li><Link to="/Transactions/DisposeAsset"> Dispose Asset</Link></li>
+                            <li><Link to="/Transactions/ScheduleGenerator"> Schedule Generator</Link></li>
+                             <li><Link to="/Transactions/ScheduleDetails"> Schedule Details</Link></li>
+                              <li><Link to="/Transactions/Survey"> Survey</Link></li>
+                              <li><Link to="/Transactions/DepreciationDetails"> Depreciation Details</Link></li>
+
                         </ul>
                     </div>
                 </li>
