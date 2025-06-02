@@ -35,6 +35,17 @@ import ScheduleGenerator from './Transactions/ScheduleGenerator/ScheduleGenerato
 import ScheduleDetails from './Transactions/ScheduleDetails/ScheduleDetails';
 import Survey from './Transactions/Survey/Survey';
 import DepreciationDetails from './Transactions/DepreciationDetails/DepreciationDetails';
+import AssetRepairTable from './Transactions/AssetRepair/AssetRepairTable';
+import AssetTransferTable from './Transactions/AssetTransfer/AssetTransferTable';
+import ConsumableIssueTable from './Transactions/ConsumableIssue/ConsumableIssueTable';
+import ContractEntryTable from './Transactions/ContractEntry/ContractEntryTable';
+import DepreciationDetailsTable from './Transactions/DepreciationDetails/DepreciationDetailsTable';
+import DisposeAssetTable from './Transactions/DisposeAsset/DisposeAssetTale';
+import InsuranceEntryTable from './Transactions/InsuranceEntery/InsuranceEnteryTable';
+import ReplacementsTable from './Transactions/Replacements/ReplacementsTable';
+import ScheduleDetailsTable from './Transactions/ScheduleDetails/ScheduleDetailsTable';
+import ScheduleGeneratorTable from './Transactions/ScheduleGenerator/ScheduleGeneratorTable';
+import SurveyTable from './Transactions/Survey/SurveyTable';
 
 
 const MyContext = createContext();
@@ -126,16 +137,28 @@ function App() {
               <Route path="/Transactions/ViewAssetAlloction" element={<ViewAssetAlloction/>} />
               <Route path="/Transactions/PurchaseOrder" element={<PurchaseOrder/>} />
               <Route path="/Transactions/ContractEntry" element={<ContractEntry/>} />
+              <Route path="/Transactions/ContractEntryTable" element={<ContractEntryTable/>} />
               <Route path="/Transactions/InsuranceEntry" element={<InsuranceEntry/>} />
+              <Route path="/Transactions/InsuranceEntryTable" element={<InsuranceEntryTable/>} />
               <Route path="/Transactions/AssetTransfer" element={<AssetTransfer/>} />
+              <Route path="/Transactions/AssetTransferTable" element={<AssetTransferTable/>} />
               <Route path="/Transactions/AssetRepair" element={<AssetRepair/>} />
+              <Route path="/Transactions/AssetRepairTable" element={<AssetRepairTable/>} />
               <Route path="/Transactions/Replacements" element={<Replacements/>} />
+              <Route path="/Transactions/ReplacementsTable" element={<ReplacementsTable/>} />
               <Route path="/Transactions/ConsumableIssue" element={<ConsumableIssue/>} />
+               <Route path="/Transactions/ConsumableIssueTable" element={<ConsumableIssueTable/>} />
+
               <Route path="/Transactions/DisposeAsset" element={<DisposeAsset/>} />
+               <Route path="/Transactions/DisposeAssetTable" element={<DisposeAssetTable/>} />
               <Route path="/Transactions/ScheduleGenerator" element={<ScheduleGenerator/>} />
+               <Route path="/Transactions/ScheduleGeneratorTable" element={<ScheduleGeneratorTable/>} />
               <Route path="/Transactions/ScheduleDetails" element={<ScheduleDetails/>} />
-               <Route path="/Transactions/Survey" element={<Survey/>} />
-                <Route path="/Transactions/DepreciationDetails" element={<DepreciationDetails/>} />
+              <Route path="/Transactions/ScheduleDetailsTable" element={<ScheduleDetailsTable/>} />
+              <Route path="/Transactions/Survey" element={<Survey/>} />
+              <Route path="/Transactions/SurveyTable" element={<SurveyTable/>} />
+              <Route path="/Transactions/DepreciationDetails" element={<DepreciationDetails/>} />
+               <Route path="/Transactions/DepreciationDetailsTable" element={<DepreciationDetailsTable/>} />
 
 
 

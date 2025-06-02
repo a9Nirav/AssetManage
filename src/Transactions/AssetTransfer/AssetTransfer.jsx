@@ -1,17 +1,14 @@
-import React from "react";
+// import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 
 import { FaEye } from "react-icons/fa";
 
-import { FaPencilAlt } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
-
 import { toast, ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
-import { FaUpload } from "react-icons/fa6";
+// import { FaUpload } from "react-icons/fa6";
 
 import { AssetTransferSchemas } from "../../features/validationSchemas";
 
@@ -37,23 +34,25 @@ const AssetTransfer = () => {
     <>
       <ToastContainer />
       <div className="right-content w-100">
-        <div></div>
-
         <div className="card shadow border-0 w-100  p-4 res-col ">
           <div className="d-flex justify-content-between algin-content-center align-items-center">
             <h5 className="mb-0">+ Asset Transfer</h5>
 
-            <Button className="ms-2" variant="contained" color="success">
-              <FaEye className="me-1" />
-              View
-            </Button>
+            <Link to="/Transactions/AssetTransferTable">
+              <Button className="ms-2" variant="contained" color="success">
+                <FaEye className="me-1" />
+                View
+              </Button>
+            </Link>
           </div>
+        </div>
 
-     
-
+        <div className="card shadow border-0 p-4 mt-3">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row mt-3">
-              <div className="text-end">Previous Transfer Code : <b>12675164</b></div>
+              <div className="text-end">
+                Previous Transfer Code : <b>12675164</b>
+              </div>
               <CustomInput
                 label="Transfer Ref No"
                 name="TrfrRef"
@@ -136,14 +135,13 @@ const AssetTransfer = () => {
                 <div className="invalid-feedback">{`Allocate  ${errors.Allocate?.message}`}</div>
               </div>
 
-               <CustomInput
+              <CustomInput
                 label="Commencement Date"
                 name="date"
                 type="date"
                 register={register}
                 errors={errors}
               />
-
 
               <div className="col-md-6 mb-3">
                 <label className="form-label">Division </label>
@@ -162,16 +160,12 @@ const AssetTransfer = () => {
                 <div className="invalid-feedback">{`Division  ${errors.Division?.message}`}</div>
               </div>
 
-
-               <CustomInput
+              <CustomInput
                 label="Remark"
                 name="Remark"
-                
                 register={register}
                 errors={errors}
               />
-
-          
             </div>
 
             {/* Submit Button */}

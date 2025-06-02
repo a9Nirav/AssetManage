@@ -4,14 +4,14 @@ import { Button } from "@mui/material";
 
 import { FaEye } from "react-icons/fa";
 
-import { FaPencilAlt } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+// import { FaPencilAlt } from "react-icons/fa";
+// import { MdDelete } from "react-icons/md";
 
 import { toast, ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
-import { FaUpload } from "react-icons/fa6";
+// import { FaUpload } from "react-icons/fa6";
 
 import { ConsumableSchemas } from "../../features/validationSchemas";
 
@@ -43,10 +43,12 @@ const ConsumableIssue = () => {
           <div className="d-flex justify-content-between algin-content-center align-items-center">
             <h5 className="mb-0">+ Consumable Issue</h5>
 
-            <Button className="ms-2" variant="contained" color="success">
-              <FaEye className="me-1" />
-              View
-            </Button>
+            <Link to="/Transactions/ConsumableIssueTable">
+              <Button className="ms-2" variant="contained" color="success">
+                <FaEye className="me-1" />
+                View
+              </Button>
+            </Link>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -99,7 +101,6 @@ const ConsumableIssue = () => {
                 errors={errors}
               />
 
-
               <div className="col-md-6 mb-3">
                 <label className="form-label">Location Name:</label>
                 <select
@@ -151,8 +152,6 @@ const ConsumableIssue = () => {
                 <div className="invalid-feedback">{`Division  ${errors.Division?.message}`}</div>
               </div>
 
-            
-
               <div className="col-md-6 mb-3">
                 <label className="form-label">User </label>
                 <select
@@ -169,8 +168,6 @@ const ConsumableIssue = () => {
                 </select>
                 <div className="invalid-feedback">{`User  ${errors.User?.message}`}</div>
               </div>
-
-            
             </div>
 
             {/* Submit Button */}

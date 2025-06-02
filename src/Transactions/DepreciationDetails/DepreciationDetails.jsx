@@ -4,14 +4,10 @@ import { Button } from "@mui/material";
 
 import { FaEye } from "react-icons/fa";
 
-import { FaPencilAlt } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
-
 import { toast, ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
-import { FaUpload } from "react-icons/fa6";
 
 import { DepreciationDetailsSchemas } from "../../features/validationSchemas";
 
@@ -43,12 +39,16 @@ const DepreciationDetails = () => {
           <div className="d-flex justify-content-between algin-content-center align-items-center">
             <h5 className="mb-0">+ Depreciation Details</h5>
 
-            <Button className="ms-2" variant="contained" color="success">
-              <FaEye className="me-1" />
-              View
-            </Button>
+            <Link to="/Transactions/DepreciationDetailsTable">
+              <Button className="ms-2" variant="contained" color="success">
+                <FaEye className="me-1" />
+                View
+              </Button>
+            </Link>
           </div>
+        </div>
 
+        <div className="card shadow border-0 p-4 mt-3">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row mt-3">
               <div className="col-md-6 mb-3">
@@ -139,16 +139,16 @@ const DepreciationDetails = () => {
               />
 
               <label>
-                <input type="radio" value="IncomeTax" {...register("BookType")} />
+                <input
+                  type="radio"
+                  value="IncomeTax"
+                  {...register("BookType")}
+                />
                 Income Tax
               </label>
 
               <label>
-                <input
-                  type="radio"
-                  value="Book"
-                  {...register("BookType")}
-                />
+                <input type="radio" value="Book" {...register("BookType")} />
                 Book
               </label>
 

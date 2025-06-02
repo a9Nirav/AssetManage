@@ -1,7 +1,8 @@
 import { Button } from "@mui/material";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
-import { FaUpload } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
+
 import { Link } from "react-router";
 import { toast, ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -131,25 +132,18 @@ const InsuranceEntry = () => {
           <h5 className="mb-0 d-flex align-items-center">Insurance Entry</h5>
 
           <div className="">
-            <Link to="">
+            <Link to="/Transactions/InsuranceEntryTable">
               <Button variant="contained" color="success" className="phone-btn">
-                View
+              <FaEye className="me-1"/>  View
               </Button>
             </Link>
 
-            <Button
-              className="ms-2 phone-btn"
-              variant="contained"
-              color="success"
-            >
-              <FaUpload className="me-1" />
-              import
-            </Button>
+          
           </div>
         </div>
 
         <div className="card shadow border-0 p-4 mt-3">
-          <h2 className="mb-4">+ Insurance Entry </h2>
+        
 
           <form onSubmit={handleSubmit(handleFormValidation)}>
             <div className="row">

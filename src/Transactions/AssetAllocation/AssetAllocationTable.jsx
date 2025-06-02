@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 
 
-const UserMasterTable = () => {
+const AssetAllocationTable = () => {
     const dispatch = useDispatch();
 
     const user = useSelector(state => state.master.user || [])
@@ -216,4 +216,4 @@ const UserMasterTable = () => {
     )
 }
 
-export default UserMasterTable
+export default AssetAllocationTable

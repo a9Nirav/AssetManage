@@ -1,11 +1,8 @@
-import React from "react";
+// import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 
 import { FaEye } from "react-icons/fa";
-
-import { FaPencilAlt } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
 
 import { toast, ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -36,18 +33,19 @@ const AssetRepair = () => {
     <>
       <ToastContainer />
       <div className="right-content w-100">
-        <div></div>
-
         <div className="card shadow border-0 w-100  p-4 res-col ">
           <div className="d-flex justify-content-between algin-content-center align-items-center">
             <h5 className="mb-0">+ Asset Repair</h5>
-
-            <Button className="ms-2" variant="contained" color="success">
-              <FaEye className="me-1" />
-              View
-            </Button>
+            <Link to="/Transactions/AssetRepairTable">
+              <Button className="ms-2" variant="contained" color="success">
+                <FaEye className="me-1" />
+                View
+              </Button>
+            </Link>
           </div>
+        </div>
 
+        <div className="card shadow border-0 p-4 mt-3">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row mt-3">
               <CustomInput

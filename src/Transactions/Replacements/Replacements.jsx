@@ -1,11 +1,8 @@
-import React from "react";
+// import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 
 import { FaEye } from "react-icons/fa";
-
-import { FaPencilAlt } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
 
 import { toast, ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -42,12 +39,16 @@ const Replacements = () => {
           <div className="d-flex justify-content-between algin-content-center align-items-center">
             <h5 className="mb-0">+ Replacements</h5>
 
-            <Button className="ms-2" variant="contained" color="success">
-              <FaEye className="me-1" />
-              View
-            </Button>
+            <Link to="/Transactions/ReplacementsTable">
+              <Button className="ms-2" variant="contained" color="success">
+                <FaEye className="me-1" />
+                View
+              </Button>
+            </Link>
           </div>
+        </div>
 
+        <div className="card shadow border-0 p-4 mt-3">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row mt-3">
               <CustomInput
@@ -56,8 +57,6 @@ const Replacements = () => {
                 register={register}
                 errors={errors}
               />
-
-             
 
               <div className="col-md-6 mb-3">
                 <label className="form-label">Asset Name:</label>
@@ -75,12 +74,6 @@ const Replacements = () => {
                 </select>
                 <div className="invalid-feedback">{`AssetName  ${errors.AssetName?.message}`}</div>
               </div>
-
-            
-
-            
-              
-              
             </div>
 
             {/* Submit Button */}

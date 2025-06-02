@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import { FaUpload } from "react-icons/fa";
 import { Link } from "react-router";
@@ -131,7 +131,7 @@ const ContractEntry = () => {
           <h5 className="mb-0 d-flex align-items-center">Contract Entry</h5>
 
           <div className="">
-            <Link to="">
+            <Link to="/Transactions/ContractEntryTable">
               <Button variant="contained" color="success" className="phone-btn">
                 View
               </Button>
@@ -148,9 +148,7 @@ const ContractEntry = () => {
           </div>
         </div>
 
-        <div className="card shadow border-0 p-4 mt-3">
-          <h2 className="mb-4">+ Contract Entry </h2>
-
+        <div className="card shadow border-0 p-4 mt-3"> 
           <form onSubmit={handleSubmit(handleFormValidation )}>
             <div className="row">
               <CustomInput

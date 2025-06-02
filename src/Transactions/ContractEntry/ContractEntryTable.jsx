@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import { React, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IoSearch } from "react-icons/io5";
 
@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 
 
-const UserMasterTable = () => {
+const ContractEntryTable = () => {
     const dispatch = useDispatch();
 
     const user = useSelector(state => state.master.user || [])
@@ -63,15 +63,7 @@ const UserMasterTable = () => {
             <ToastContainer />
 
 
-            {/* {
-                view && <TableModal {...{
-                    setView,
-                    MobalData,
-                    title: "Company Modal"
-                }}
-
-                />
-            } */}
+           
 
 
 
@@ -79,7 +71,7 @@ const UserMasterTable = () => {
                 view && <TableModal {...{
                     setView,
                     MobalData,
-                    title: "User Details"
+                    title: "Asset Repair Table"
                 }}
 
                 />
@@ -88,8 +80,8 @@ const UserMasterTable = () => {
             <div className='right-content w-100'>
 
                 <div className="card shadow border-0 w-100 flex-row p-4 res-col d-flex justify-content-between">
-                    <h5 className='mb-0 d-flex align-items-center'>User Master</h5>
-                    <Link to="/Master/UserMaster">
+                    <h5 className='mb-0 d-flex align-items-center'>Contract Entry Table</h5>
+                    <Link to="/Transactions/ContractEntry">
                         <Button variant="contained" color="success">+ add</Button>
                     </Link>
 
@@ -126,15 +118,13 @@ const UserMasterTable = () => {
                             <tr>
 
                                 <th style={{ width: "10px" }}>No.</th>
-                                <th>Name</th>
+                                <th>Reference No. </th>
 
 
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <th>Location</th>
-                                <th>Division</th>
-                                <th>Job Title</th>
-
+                                <th>Asset Name</th>
+                                <th>Part Added / Replaced</th>
+                                <th>Repair Date</th>
+                                <th>Remark</th>
                                 <th>ACTION</th>
                             </tr>
                         </thead>
@@ -151,7 +141,7 @@ const UserMasterTable = () => {
                                         <td>{vendor.emailID}</td>
                                         <td>{vendor.locName}</td>
                                         <td>{vendor.divName}</td>
-                                        <td>{vendor.jobTitle}</td>
+                                 
                                         <td>
                                             <div className="actions d-flex align-items-center">
 
@@ -216,4 +206,4 @@ const UserMasterTable = () => {
     )
 }
 
-export default UserMasterTable
+export default ContractEntryTable

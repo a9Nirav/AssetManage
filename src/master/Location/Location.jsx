@@ -40,7 +40,22 @@ const Location = () => {
     const dispatch = useDispatch();
     // const { locations, loading } = useSelector(state => state.location);
     const locations = useSelector(state => state.master.locations);
-    const { searchQuery, setSearchQuery, filteredData } = useSearch(locations);
+
+const locations1 = [
+  {
+    id: 1,
+    locName: "mumbai",
+    locDesc: "test"
+  },
+  {
+    id: 2,
+    locName: "mumbai",
+    locDesc: "test"
+  }
+];
+
+
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(locations1);
     // const [locations, setLocations] = useState([]);
     const [editId, setEditId] = useState("");
 

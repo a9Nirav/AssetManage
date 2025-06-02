@@ -4,14 +4,10 @@ import { Button } from "@mui/material";
 
 import { FaEye } from "react-icons/fa";
 
-import { FaPencilAlt } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
-
 import { toast, ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
-import { FaUpload } from "react-icons/fa6";
 
 import { DisposeAssetSchemas } from "../../features/validationSchemas";
 
@@ -43,12 +39,16 @@ const DisposeAsset = () => {
           <div className="d-flex justify-content-between algin-content-center align-items-center">
             <h5 className="mb-0">+ Dispose Asset</h5>
 
-            <Button className="ms-2" variant="contained" color="success">
-              <FaEye className="me-1" />
-              View
-            </Button>
+            <Link to="/Transactions/DisposeAssetTable">
+              <Button className="ms-2" variant="contained" color="success">
+                <FaEye className="me-1" />
+                View
+              </Button>
+            </Link>
           </div>
+        </div>
 
+        <div className="card shadow border-0 p-4 mt-3">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row mt-3">
               <div className="">
@@ -62,14 +62,12 @@ const DisposeAsset = () => {
                 errors={errors}
               />
 
-               <CustomInput
+              <CustomInput
                 label="Bar Code"
                 name="BarCode"
                 register={register}
                 errors={errors}
               />
-
-             
 
               <div className="col-md-6 mb-3">
                 <label className="form-label">Asset Name:</label>
@@ -102,14 +100,13 @@ const DisposeAsset = () => {
                 errors={errors}
               />
 
-               <CustomInput
+              <CustomInput
                 label="Depreciation Method"
                 name="DepreMethod"
                 register={register}
                 errors={errors}
               />
 
-              
               <CustomInput
                 label="Depreciation Rate"
                 name="DepreRate"
@@ -117,33 +114,33 @@ const DisposeAsset = () => {
                 errors={errors}
               />
 
-               <CustomInput
+              <CustomInput
                 label="Salvage Value Rs"
                 name="SalvageValue"
                 register={register}
                 errors={errors}
               />
 
-               <CustomInput
+              <CustomInput
                 label="Recovery Period"
                 name="RecoveryPeriod"
                 register={register}
                 errors={errors}
-              /> 
+              />
 
-               <CustomInput
+              <CustomInput
                 label="Book Value"
                 name="BookValue"
                 register={register}
                 errors={errors}
-              />    
+              />
 
-               <CustomInput
+              <CustomInput
                 label="Value Sold"
                 name="ValueSold"
                 register={register}
                 errors={errors}
-              />  
+              />
 
               <CustomInput
                 label="DisPose Date"
@@ -151,7 +148,7 @@ const DisposeAsset = () => {
                 type="Date"
                 register={register}
                 errors={errors}
-              />  
+              />
 
               <CustomInput
                 label="Remarks"
@@ -159,17 +156,7 @@ const DisposeAsset = () => {
                 type="Date"
                 register={register}
                 errors={errors}
-              />  
-
-
-
-             
-
-             
-
-             
-
-         
+              />
             </div>
 
             {/* Submit Button */}
