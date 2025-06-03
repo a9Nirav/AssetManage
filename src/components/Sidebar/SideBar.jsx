@@ -6,7 +6,7 @@ import { FaAngleRight } from "react-icons/fa6";
 // import { MdMessage } from "react-icons/md";
 import { FaBell } from "react-icons/fa6";
 import { IoIosSettings } from "react-icons/io";
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import { IoMdLogOut } from "react-icons/io";
 import { FaUser } from "react-icons/fa";    
@@ -50,16 +50,17 @@ const SideBar = () => {
         setActiveTab(isTransactionsSubmenuOpen ? null : 2);
     }
 
+
     return (
         <div className="sidebar">
             <ul>
                 <li>
-                    <Link to="/">
+                    <NavLink to="/">
                         <Button className={`w-100 ${activeTab === 0 ? 'active' : ''}`} onClick={() => setActiveTab(0)}>
                             <span className='icon'><MdDashboard /></span>
                             Dashboard
                         </Button>
-                    </Link>
+                    </NavLink>
                 </li>
                 
                 {/* Master Section */}
@@ -71,16 +72,16 @@ const SideBar = () => {
                     </Button>
                     <div className={`submenuWrapper ${isMasterSubmenuOpen ? 'colapse' : 'colapsed'}`}>
                         <ul className='submenu'>
-                            <li><Link to="/Master/UserMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>User</Link></li>
-                            <li><Link to="/Master/CompanyMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Company</Link></li>
-                            <li><Link to="/Master/Location"><span className='icon mr-3 me-2'><FaUserAlt /></span>Location</Link></li>
-                            <li><Link to="/Master/Division"><span className='icon mr-3 me-2'><FaUserAlt /></span>Division</Link></li>
-                            <li><Link to="/Master/Department"><span className='icon mr-3 me-2'><FaUserAlt /></span>Department</Link></li>
-                            <li><Link to="/Master/TaxMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Tax Master</Link></li>
-                            <li><Link to="/Master/GLMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>GL Type</Link></li>
-                            <li><Link to="/Master/AssetType"><span className='icon mr-3 me-2'><FaUserAlt /></span>Asset Type</Link></li>
-                            <li><Link to="/Master/AssetMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Asset Master</Link></li>
-                            <li><Link to="/Master/VendorMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Vendor Master</Link></li>
+                            <li ><NavLink className={({isActive})=> isActive ? 'active':''} to="/Master/UserMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>User</NavLink></li>
+                            <li><NavLink to="/Master/CompanyMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Company</NavLink></li>
+                            <li><NavLink to="/Master/Location"><span className='icon mr-3 me-2'><FaUserAlt /></span>Location</NavLink></li>
+                            <li><NavLink to="/Master/Division"><span className='icon mr-3 me-2'><FaUserAlt /></span>Division</NavLink></li>
+                            <li><NavLink to="/Master/Department"><span className='icon mr-3 me-2'><FaUserAlt /></span>Department</NavLink></li>
+                            <li><NavLink to="/Master/TaxMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Tax Master</NavLink></li>
+                            <li><NavLink to="/Master/GLMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>GL Type</NavLink></li>
+                            <li><NavLink to="/Master/AssetType"><span className='icon mr-3 me-2'><FaUserAlt /></span>Asset Type</NavLink></li>
+                            <li><NavLink to="/Master/AssetMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Asset Master</NavLink></li>
+                            <li><NavLink to="/Master/VendorMaster"><span className='icon mr-3 me-2'><FaUserAlt /></span>Vendor Master</NavLink></li>
                            
 
                         </ul>
@@ -99,59 +100,59 @@ const SideBar = () => {
                     </Button>
                     <div className={`submenuWrapper ${isTransactionsSubmenuOpen ? 'colapse' : 'colapsed'}`}>
                         <ul className='submenu'>
-                            <li><Link to="/Transactions/AssetAlloction"> Asset Allocation</Link></li>
-                             <li><Link to="/Transactions/PurchaseOrder"> Purchase Order</Link></li>
-                             <li><Link to="/Transactions/ContractEntry"> Contract Entry</Link></li>
-                            <li><Link to="/Transactions/InsuranceEntry"> Insurance Entry</Link></li>
-                            <li><Link to="/Transactions/AssetTransfer"> Asset Transfer</Link></li>
-                            <li><Link to="/Transactions/AssetRepair"> Asset Repair</Link></li>
-                            <li><Link to="/Transactions/Replacements"> Replacements</Link></li>
-                            <li><Link to="/Transactions/ConsumableIssue"> Consumable Issue</Link></li>
-                            <li><Link to="/Transactions/DisposeAsset"> Dispose Asset</Link></li>
-                            <li><Link to="/Transactions/ScheduleGenerator"> Schedule Generator</Link></li>
-                             <li><Link to="/Transactions/ScheduleDetails"> Schedule Details</Link></li>
-                              <li><Link to="/Transactions/Survey"> Survey</Link></li>
-                              <li><Link to="/Transactions/DepreciationDetails"> Depreciation Details</Link></li>
+                            <li><NavLink to="/Transactions/AssetAlloction"> Asset Allocation</NavLink></li>
+                             <li><NavLink to="/Transactions/PurchaseOrder"> Purchase Order</NavLink></li>
+                             <li><NavLink to="/Transactions/ContractEntry"> Contract Entry</NavLink></li>
+                            <li><NavLink to="/Transactions/InsuranceEntry"> Insurance Entry</NavLink></li>
+                            <li><NavLink to="/Transactions/AssetTransfer"> Asset Transfer</NavLink></li>
+                            <li><NavLink to="/Transactions/AssetRepair"> Asset Repair</NavLink></li>
+                            <li><NavLink to="/Transactions/Replacements"> Replacements</NavLink></li>
+                            <li><NavLink to="/Transactions/ConsumableIssue"> Consumable Issue</NavLink></li>
+                            <li><NavLink to="/Transactions/DisposeAsset"> Dispose Asset</NavLink></li>
+                            <li><NavLink to="/Transactions/ScheduleGenerator"> Schedule Generator</NavLink></li>
+                             <li><NavLink to="/Transactions/ScheduleDetails"> Schedule Details</NavLink></li>
+                              <li><NavLink to="/Transactions/Survey"> Survey</NavLink></li>
+                              <li><NavLink to="/Transactions/DepreciationDetails"> Depreciation Details</NavLink></li>
 
                         </ul>
                     </div>
                 </li>
 
                 <li>
-                    <Link to="/">
+                    <NavLink to="/">
                         <Button className={`w-100 ${activeTab === 4 ? 'active' : ''}`} onClick={() => setActiveTab(4)}>
                             <span className='icon'><FaBell /></span>
                             Notifications
                             <span className='arrow'><FaAngleRight /></span>
                         </Button>
-                    </Link>
+                    </NavLink>
                 </li>
 
                 <li>
-                    <Link to="/">
+                    <NavLink to="/">
                         <Button className={`w-100 ${activeTab === 5 ? 'active' : ''}`} onClick={() => setActiveTab(5)}>
                             <span className='icon'><IoIosSettings /></span>
                             Settings
                             <span className='arrow'><FaAngleRight /></span>
                         </Button>
-                    </Link>
+                    </NavLink>
                 </li>
 
                 <li>
-                    <Link to="/login">
+                    <NavLink to="/login">
                         <Button className={`w-100 ${activeTab === 6 ? 'active' : ''}`} onClick={() => setActiveTab(6)}>
                             <span className='icon'><FaUser /></span>
                             Login
                         </Button>
-                    </Link>
+                    </NavLink>
                 </li>
                 <li>
-                    <Link to="/signUp">
+                    <NavLink to="/signUp">
                         <Button className={`w-100 ${activeTab === 7 ? 'active' : ''}`} onClick={() => setActiveTab(7)}>
                             <span className='icon'><FaUser /></span>
                             Sign Up
                         </Button>
-                    </Link>
+                    </NavLink>
                 </li>
             </ul>
 

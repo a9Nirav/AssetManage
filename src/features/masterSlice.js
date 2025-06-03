@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   fetchLocations, createLocation, updateLocation, getlogin, createUser,
-  fetchUser, createDept, createDivi, fetchDivi, fetchDept, createTaxMaster, fetchTaxMaster, createGLType, fetchGLType, createVendor
+  fetchUser, createDept, createDivi, fetchDivi, fetchDept, createTaxMaster, fetchTaxMaster, createGLType, fetchGLType, createVendor, deleteLocation
   , fetchVendor
 } from './masterApi';
 
@@ -83,19 +83,48 @@ const MasterSlice = createSlice({
           state.locations[index] = {
             ...state.locations[index],
             ...updatedLocation,
-          };
+          }
         }
-        
+
       })
 
-      
+
+
+.addCase(deleteLocation.fulfilled, (state, action) => {
+  const deletedLocCode = action.payload?.LocCode;
+  if (deletedLocCode) {
+    state.locations = state.locations.filter(loc => loc.LocCode !== deletedLocCode);
+  }
+})
+
+
+      // .addCase(deleteLocation.fulfilled, (state, action) => {
+      //   // const deletedLocCode = action.payload?.LocCode;
+      //   // state.locations = state.locations.filter(
+      //   //   (loc) => loc.LocCode !== deletedLocCode
+      //   // );
+      //   // console.log(state.locations)
+      //   state.action=action.payload
+      // })
 
 
 
 
 
 
-      
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

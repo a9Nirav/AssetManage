@@ -542,6 +542,8 @@ body.dark .main .sidebarWrapper .sidebar ul li button.active {
   color: #000 !important;
 }
 
+
+
 .main .sidebarWrapper .sidebar ul li button.active .arrow {
   transform: rotate(90deg);
 }
@@ -570,6 +572,8 @@ body.dark .main .sidebarWrapper .sidebar ul li button.active {
   background: rgba(0, 0, 0, 0.2);
 }
 
+
+
 body.dark .main .sidebarWrapper .sidebar ul .submenu::before {
   background: rgba(255, 255, 255, 0.2);
 }
@@ -580,14 +584,14 @@ body.dark .main .sidebarWrapper .sidebar ul .submenu::before {
 }
 
 .main .sidebarWrapper .sidebar ul .submenu li a {
-  color: #ffffff !important;
+  color: #ffffff ;
   text-decoration: none;
   display: block;
   padding: 6px 0px;
   font-size: 14px;
   font-weight: 500;
   transition: all 0.3s;
-  border-bottom: 1px solid #ffffff7c;
+  /* border-bottom: 1px solid #ffffff7c; */
   /* text-align: center; */
   padding-left: 20px;
   border-radius: 4px;
@@ -619,10 +623,19 @@ body.dark .main .sidebarWrapper .sidebar ul .submenu::before {
   border: 1px solid #ffffff;
 }
 
-.main .sidebarWrapper .sidebar ul .submenu li a:active {
-  border: 1px solid #ffffff !important;
 
+
+  .sidebar ul .submenu li a.active {
+  border: 1px Solid #ffffff !important;
+  background-color: #2b2b2b; /* Optional: highlight background */
+  color: #E9BD51 !important; /* Optional: highlight text */
 }
+
+.sidebar ul .submenu li a.active .icon{
+  color: #E9BD51;
+}
+
+
 
 .sidebarWrapper .sidebar {
 

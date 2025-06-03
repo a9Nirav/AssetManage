@@ -39,28 +39,20 @@ const Location = () => {
 
     const dispatch = useDispatch();
     // const { locations, loading } = useSelector(state => state.location);
-    const locations = useSelector(state => state.master.locations);
-
-const locations1 = [
-  {
-    id: 1,
-    locName: "mumbai",
-    locDesc: "test"
-  },
-  {
-    id: 2,
-    locName: "mumbai",
-    locDesc: "test"
-  }
-];
+    const locations = useSelector(state => state.master.locations || []);
 
 
-    const { searchQuery, setSearchQuery, filteredData } = useSearch(locations1);
+
+
+
+    const { searchQuery, setSearchQuery, filteredData } = useSearch(locations);
     // const [locations, setLocations] = useState([]);
     const [editId, setEditId] = useState("");
 
+
     useEffect(() => {
         dispatch(fetchLocations());
+
 
     }, [dispatch]);
 
@@ -83,14 +75,15 @@ const locations1 = [
 
     // Pre-fill form when editing
     const startEdit = (loc) => {
-        setEditId(loc.locCode);
-        setValue("Loc_Name", loc.locName);
-        setValue("Loc_Desc", loc.locDesc);
+        setEditId(loc.LocCode);
+        setValue("LocName", loc.LocName);
+        setValue("LocDesc", loc.LocDesc);
         console.log("hello")
-
-
     };
     console.log(editId)
+
+
+
 
 
 
@@ -111,14 +104,14 @@ const locations1 = [
         try {
             let response;
             if (editId) {
-            let response1 = await dispatch(updateLocation({ locCode: editId, data })).unwrap();
-                toast.success(response1?.errorDescription ||"Location ");
-                console.log(response1)
+                let response1 = await dispatch(updateLocation({ locCode: editId, data })).unwrap();
+                toast.success(response1?.ErrorDescription || "Location Update");
+
             } else {
-              response =  await dispatch(createLocation(data)).unwrap();
-                toast.success(response?.errorDescription || "Location added successfully!");
-              console.log(response)
-               
+                response = await dispatch(createLocation(data)).unwrap();
+                toast.success(response?.ErrorDescription || "Location added successfully!");
+                console.log(response)
+
             }
 
             reset();         // Clear the form
@@ -132,19 +125,70 @@ const locations1 = [
     };
 
 
-    const handleDelete = async (locCode) => {
-        if (window.confirm("Are you sure you want to delete this location?")) {
-            try {
-                await dispatch(deleteLocation(locCode)).unwrap();
-                toast.success("Location deleted successfully!");
-                dispatch(fetchLocations());
-            } catch (errorMessage) {
-                toast.error(errorMessage); // Show custom error from API
-                console.error("Delete error:", errorMessage);
-            }
-        }
-    };
 
+
+    // const handleDelete = async (locCode) => {
+    //     const locationToDelete = locations.find(loc => loc.LocCode === locCode);
+    //     console.log(locationToDelete)
+    //     console.log(locCode)
+
+    //     if (!locationToDelete) {
+    //         toast.error("Location not found.");
+    //         return;
+    //     }
+
+    //     if (window.confirm(`Are you sure you want to delete this location? ${locationToDelete.LocName}` )) {
+    //         try {
+    //             const response = await dispatch(deleteLocation({
+    //                 locCode,
+    //                 data: {
+    //                     LocName: locationToDelete.LocName ,
+    //                     LocDesc: locationToDelete.LocDesc 
+    //                 }
+    //             })).unwrap();
+            
+
+    //             toast.success(response?.ErrorDescription || "Location Deleted");
+    //             dispatch(fetchLocations());
+                
+
+    //         } catch (error) {
+    //             toast.error(error);
+    //             console.error("Delete error:", error);
+    //         }
+    //     }
+    // };
+
+
+
+const handleDelete = async (locCode) => {
+  const locationToDelete = locations.find(loc => loc.LocCode === locCode);
+
+  if (!locationToDelete) {
+    toast.error("Location not found");
+    return;
+  }
+
+  if (window.confirm("Are you sure you want to delete this location?")) {
+    try {
+      const response = await dispatch(deleteLocation({
+        locCode,
+        data: {
+          LocName: locationToDelete.LocName || "TEST",
+          LocDesc: locationToDelete.LocDesc || "TEST"
+        }
+      })).unwrap();
+
+      toast.success(response?.ErrorDescription || "Location deleted successfully!");
+      
+      // Optional: Refresh from backend (good if data changes outside UI)
+      dispatch(fetchLocations());
+    } catch (error) {
+      toast.error(error || "Delete failed");
+      console.error("Delete error:", error);
+    }
+  }
+};
 
 
 
@@ -173,8 +217,8 @@ const locations1 = [
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
-                            <CustomInput label="Location" name="Loc_Name" register={register} errors={errors} />
-                            <CustomInput label="Description" name="Loc_Desc" register={register} errors={errors} />
+                            <CustomInput label="Location" name="LocName" register={register} errors={errors} />
+                            <CustomInput label="Description" name="LocDesc" register={register} errors={errors} />
 
 
 
@@ -234,14 +278,14 @@ const locations1 = [
                             {paginatedData.map((loc, index) => (
                                 <tr key={loc.id || index}>
                                     <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                    <td>{loc.locName}</td>
-                                    <td>{loc.locDesc}</td>
+                                    <td>{loc.LocName}</td>
+                                    <td>{loc.LocDesc}</td>
                                     <td>
                                         <div className="actions d-flex align-items-center">
                                             <Link to="">
                                                 <Button className="success" color="success" onClick={() => startEdit(loc)}><FaPencilAlt /></Button>
                                             </Link>
-                                            <Button className="error" color="error" onClick={() => handleDelete(loc.locCode)}><MdDelete /></Button>
+                                            <Button className="error" color="error" onClick={() => handleDelete(loc.LocCode)}><MdDelete /></Button>
                                         </div>
                                     </td>
                                 </tr>

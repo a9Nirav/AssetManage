@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { MyContext } from '../../App';
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { FaUserTie } from "react-icons/fa6";
+import { HiOfficeBuilding } from "react-icons/hi";
 import Button from '@mui/material/Button';
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
@@ -8,6 +10,8 @@ import { FaLock } from "react-icons/fa6";
 import logo1 from '../../assets/logo.png';
 import { getlogin } from '../../features/masterApi.js';
 import { useDispatch } from 'react-redux';
+
+
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -20,6 +24,7 @@ const Login = () => {
         ComCode: ''
     });
 
+    const currentDate = new Date().toDateString();
 
     const context = useContext(MyContext);
     const navigate = useNavigate();
@@ -37,7 +42,7 @@ const Login = () => {
         }));
 
     };
-console.log(formData)
+    console.log(formData)
     const onSubmit = async (e) => {
         e.preventDefault(); // prevent form reload
         try {
@@ -50,15 +55,17 @@ console.log(formData)
         }
     };
 
-    
+
 
     return (
         <section className="loginSection vh-100 d-flex align-items-center">
             <div className="container">
                 <div className="row justify-content-center">
-                    <div className="col-md-4 col-lg-3">
+                    <div className="col-md-5 col-lg-4">
                         <div className="loginBox">
-                            <div className='wrapper mt-3 card border p-4'>
+                            <div className="text-end" >Date:- {currentDate}</div>
+                            <div className='wrapper border p-4'>
+
                                 <div className=' text-center'>
                                     <div className=" d-flex justify-content-center">
                                         <img src={logo1} width={"30px"} alt="Logo" />
@@ -66,6 +73,54 @@ console.log(formData)
                                     <h5 className='font-weight-bold mt-2 mb-3'>Login Now</h5>
                                 </div>
                                 <form onSubmit={onSubmit}>
+
+                                    <div className={`form-group position-relative ${inputIndex === 2 && 'focus'}`}>
+
+                                        <span className='icon fs-6'><FaUserTie /></span>
+                                        <input
+                                            type="text"
+                                            name="LoginName"
+                                            value={formData.LoginName}
+                                            onChange={handleChange}
+                                            className="form-control my-2"
+                                            placeholder='Login Name'
+                                            onFocus={() => setInputIndex(2)}
+                                            onBlur={() => setInputIndex(null)}
+                                            autoFocus
+                                        />
+                                    </div>
+
+
+                                    <div className={`form-group position-relative ${inputIndex === 3 && 'focus'}`}>
+                                        <span className='icon fs-6'><HiOfficeBuilding /></span>
+                                        {/* <input
+                                            type="text"
+                                            name="ComCode"
+                                            value={formData.ComCode}
+                                            onChange={handleChange}
+                                            className="form-control my-2"
+                                            placeholder='ComCode'
+                                            onFocus={() => setInputIndex(3)}
+                                            onBlur={() => setInputIndex(null)}
+                                            autoFocus
+                                        /> */}
+
+                                        <select name="cars" id="cars" 
+                                        className='form-control my-2'
+
+                                          onFocus={() => setInputIndex(3)}
+                                            onBlur={() => setInputIndex(null)}
+                                            autoFocus
+                                        >
+                                            <option value="select company">select Compnay</option>
+                                            <option value="saab">Saab</option>
+                                            <option value="mercedes">Mercedes</option>
+                                            <option value="audi">Audi</option>
+                                        </select>
+
+                                    </div>
+
+
                                     <div className={`form-group position-relative ${inputIndex === 0 && 'focus'}`}>
                                         <span className='icon'><FaUserAlt /></span>
                                         <input
@@ -98,23 +153,7 @@ console.log(formData)
                                         </span>
                                     </div>
 
-                                    <input
-                                        type="text"
-                                        name="LoginName"
-                                        value={formData.LoginName}
-                                        onChange={handleChange}
-                                        className="form-control my-2"
-                                        placeholder='Login Name'
-                                    />
 
-                                    <input
-                                        type="text"
-                                        name="ComCode"
-                                        value={formData.ComCode}
-                                        onChange={handleChange}
-                                        className="form-control my-2"
-                                        placeholder='ComCode'
-                                    />
 
                                     <div className='form-group'>
                                         <Button type="submit" className="btn-blue btn-lg w-100">Sign In</Button>

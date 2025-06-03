@@ -35,8 +35,10 @@ export const fetchLocations = createAsyncThunk('location/fetchAll', async () => 
     ComCode: auth?.ComCode || '',
   };
   const response = await postData(`${GetLocation}`, body);
- 
-  return response.data;
+  console.log(response)
+  console.log(body)
+  return response.Data;
+
 });
 
 
@@ -81,9 +83,9 @@ export const createLocation = createAsyncThunk('location/create', async (formDat
   const auth = getAuthInfo();
   const body = {
     // UserId: auth?.UserId || '',
-    UserId:"nirav",
+    UserCode: "001",
     ComCode: auth?.ComCode || '',
-   
+
     ...formData, // merge formData into body
   };
   const response = await postData(`${AddLocation}`, body);
@@ -101,7 +103,7 @@ export const createDept = createAsyncThunk('Dept/create', async (formData) => {
   const auth = getAuthInfo();
   const body = {
     // UserCode: auth?.UserId || '',
-    UserCode:"001",
+    UserCode: "001",
     ComCode: auth?.ComCode || '',
     ...formData, // merge formData into body
   };
@@ -130,7 +132,7 @@ export const createDivi = createAsyncThunk('Divi/create', async (formData) => {
   const auth = getAuthInfo();
   const body = {
     // UserId: auth?.UserId || '',
-    UserId:"001",
+    UserId: "001",
     ComCode: auth?.ComCode || '',
     ...formData, // merge formData into body
   };
@@ -155,7 +157,7 @@ export const createTaxMaster = createAsyncThunk('Tax/create', async (formData) =
   const auth = getAuthInfo();
   const body = {
     // UserId: auth?.UserId || '',
-    UserCode:"001",
+    UserCode: "001",
     ComCode: auth?.ComCode || '',
     ...formData, // merge formData into body
   };
@@ -180,7 +182,7 @@ export const createGLType = createAsyncThunk('GLType/create', async (formData) =
   const auth = getAuthInfo();
   const body = {
     // UserId: auth?.UserId || '',
-    UserCode:"001",
+    UserCode: "001",
     ComCode: auth?.ComCode || '',
     ...formData, // merge formData into body
   };
@@ -211,7 +213,7 @@ export const createVendor = createAsyncThunk('Vendor/create', async (formData) =
   const auth = getAuthInfo();
   const body = {
     // UserId: auth?.UserId || '',
-    UserCode:"001",
+    UserCode: "001",
     ComCode: auth?.ComCode || '',
     ...formData, // merge formData into body
   };
@@ -280,63 +282,89 @@ export const updateLocation = createAsyncThunk(
   'master/updateLocation',
   async ({ locCode, data }) => {
     // Add LocCode to data explicitly
-      const auth = getAuthInfo();
-    const payload = { ...data, LocCode: locCode , UserCode: "001"|| '',
-    ComCode: auth?.ComCode || '',};
+    const auth = getAuthInfo();
+    const payload = {
+      ...data, LocCode: locCode, UserCode: "001" || '',
+      ComCode: auth?.ComCode || '',
+    };
 
-    await postData('/SAM_AddUpdateDelLocationDetails', payload); // returns 204
-    return payload; // return the sent payload manually
-   
+    const ans = await postData('/SAM_AddUpdateDelLocationDetails', payload); // returns 204
+    console.log(ans.ErrorDescription)
+    return ans; // return the sent payload manually
+
   }
- 
+
 );
 
 
-// export const updateLocation = createAsyncThunk(
-//   'master/updateLocation',
-//   async ({ locCode, data }) => {
+// export const deleteLocation = createAsyncThunk('master/deletelocation',
+//   async ({ locCode, data }, { rejectWithValue }) => {
 //     const auth = getAuthInfo();
 //     const payload = {
 //       ...data,
-//       LocCode: locCode,
+//       LocCode: locCode, // <- make sure this is lowercase `locCode`
 //       UserCode: "001",
 //       ComCode: auth?.ComCode || '',
+//       IsDelete: "1", // important
 //     };
 
-//     await postData('/SAM_AddUpdateDelLocationDetails', payload); // 204 response
-//     // No need to return anything, because we'll fetch fresh list after this
+//     try {
+//       const response = await postData('/SAM_AddUpdateDelLocationDetails', payload);
+//       console.log(response)
+//       if (response.ErrorCode !== 200) {
+//         return rejectWithValue(response?.ErrorDescription || "Delete failed");
+//       }
+    
+//       return payload; // Return the same payload to update state
+      
+//     } catch (err) {
+//       return rejectWithValue(err?.errorDescription || "API error");
+     
+      
+//     }
 //   }
 // );
 
 
+
+
+
+
+
+
+
+
 export const deleteLocation = createAsyncThunk(
   'master/deleteLocation',
-  async (locCode,{ rejectWithValue }) => {
+  async ({ locCode, data }, { rejectWithValue }) => {
     const auth = getAuthInfo();
 
     const payload = {
+      ...data,
       LocCode: locCode,
-      Loc_Name: "",      // Empty values if not needed
-      Loc_Desc: "",
       UserCode: "001",
       ComCode: auth?.ComCode || '',
-      IsDelete: "1",     // Mark for deletion
+      IsDelete: "1",
     };
 
     try {
       const response = await postData('/SAM_AddUpdateDelLocationDetails', payload);
-      if(response.errorCode!==200){
-        console.log("no")
+
+      if (response?.ErrorCode !== "200") {
+        return rejectWithValue(response?.ErrorDescription || "Failed to delete");
       }
-      console.log(response.errorCode)
-      return locCode; 
-      
+
+      return { ...response, LocCode: locCode };
     } catch (err) {
-      // Assuming API sends: { errorCode: 'E408', errorDescription: '...' }
-      return rejectWithValue(err?.errorDescription || "Failed to delete");
+      return rejectWithValue("Delete failed");
     }
   }
 );
+
+
+
+
+
 
 
 
