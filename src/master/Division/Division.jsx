@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@mui/material'
+import { useState, useEffect } from 'react';
 
 import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
@@ -13,23 +14,27 @@ import CustomInput from "../../components/CustomInput/CustomInput";
 import { FaUpload } from "react-icons/fa6";
 import useSearch from '../../features/useSearch';
 import { IoSearch } from "react-icons/io5";
+import { Autocomplete, TextField } from '@mui/material';
 
 
 import { DivisionValidationSchema } from "../../features/validationSchemas";
 import { useDispatch, useSelector } from 'react-redux';
-import { createDivi, fetchDivi } from '../../features/masterApi';
+import { createDivi, fetchDivi, fetchLocations, updateDivi, deleteDiVi } from '../../features/masterApi';
 import usePagination from "../../features/usePagination";
 
 const Division = () => {
     const dispatch = useDispatch();
     const division = useSelector((state) => state.master.divis || [])
     const locations = useSelector(state => state.master.locations);
-    console.log('division' + division)
+
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [editId, setEditId] = useState("");
     // React Hook Form Setup
     const {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors },
 
     } = useForm({
@@ -38,21 +43,86 @@ const Division = () => {
     });
 
 
+    // Pre-fill form when editing
+    const startEdit = (a) => {
+        setEditId(a.DivCode);
+        setValue("DivName", a.DivName);
+        setValue("DivDesc", a.DivDesc);
+        setValue("LocCode", a.LocCode);
+        const matchedLocation = locations.find((loc) => loc.LocCode === a.LocCode);
+        setSelectedLocation(matchedLocation || null);
+
+
+    };
+    console.log(selectedLocation)
+
+
+
     const { searchQuery, setSearchQuery, filteredData } = useSearch(division);
 
 
     useEffect(() => {
         dispatch(fetchDivi())
+        dispatch(fetchLocations())
     }, [dispatch])
 
     const onSubmit = async (data) => {
-        await dispatch(createDivi(data)).unwrap();
-        console.log("Form Data:", data);
-        toast.success("Submit Data Success");
-        dispatch(fetchDivi())
-        reset()
+        try {
 
+            if (editId) {
+                let res1 = await dispatch(updateDivi({ DivCode: editId, data })).unwrap();
+                toast.success(res1.ErrorDetails.ErrorDescription)
+             
+            } else {
+                const res = await dispatch(createDivi(data)).unwrap();
+                toast.success(res?.ErrorDetails?.ErrorDescription || "Division ");
+            }
+
+
+            dispatch(fetchDivi());
+            reset();
+            setSelectedLocation(null);
+
+
+        } catch (err) {
+            toast.error("Failed to create division");
+            console.error("Submit error:", err);
+        }
     };
+
+    const handleDelete = async (a) => {
+        const DiviToDelete = division.find(e => e.DivCode === a);
+
+        console.log(a)
+        console.log(DiviToDelete.LocCode)
+
+        if (!DiviToDelete) {
+            toast.error("Location not found");
+            return;
+        }
+
+
+
+        if (window.confirm(`Are you sure you want to delete this Division? ${DiviToDelete.DivName}`)) {
+            try {
+                const response = await dispatch(deleteDiVi({
+                    DivCode: DiviToDelete.DivCode,
+                    LocCode: DiviToDelete.LocCode,
+
+                })).unwrap();
+
+                toast.success(response?.ErrorDetails.ErrorDescription || "Divition deleted successfully!");
+
+                // Optional: Refresh from backend (good if data changes outside UI)
+                dispatch(fetchDivi());
+            } catch (error) {
+                toast.error(error || "Delete failed");
+                console.error("Delete error:", error);
+            }
+        }
+    };
+
+
 
 
     const {
@@ -64,7 +134,7 @@ const Division = () => {
         totalPages
     } = usePagination(filteredData, 5);
 
-    
+
     return (
         <>
             <ToastContainer />
@@ -85,25 +155,38 @@ const Division = () => {
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="row">
-                            <CustomInput label="Division" name="Div_Name" register={register} errors={errors} />
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">Location Name:</label>
-                                <select
-                                    className={`form-select form-control ${errors.Loc_Code ? "is-invalid" : ""}`}
-                                    {...register("Loc_Code")}
-                                    aria-label="Default select example"
-                                >
-                                    <option value="">Select a location</option>
-                                    {locations.map((loc) => (
-                                        <option key={loc.id} value={loc.locCode}>
-                                            {loc.locName}
-                                        </option>
-                                    ))}
-                                </select>
-                                <div className="invalid-feedback">{`Location  ${errors.Loc_Code?.message}`}</div>
+                            <CustomInput label="Division" name="DivName" register={register} errors={errors} />
+                            <div className="col-md-6">
+                                <Autocomplete
+                                    options={locations}
+                                    getOptionLabel={(option) => option.LocName}
+                                    value={selectedLocation}
+                                    onChange={(e, value) => {
+                                        setSelectedLocation(value)
+                                        setValue("LocCode", value?.LocCode || "");
+                                    }}
+                                    renderInput={(params) => (
+                                        <>
+                                            <label className="form-label">Location Name</label>
+                                            <TextField
+                                                {...params}
+                                                placeholder="Type to search location"
+
+                                                className={`form-control ${errors?.LocCode ? "is-invalid" : ""}`}
+
+                                            />
+                                            {errors?.LocCode && (
+                                                <div className="invalid-feedback">
+                                                    {`Location Name ${errors?.LocCode.message} `}
+                                                </div>
+                                            )}
+
+                                        </>
+                                    )}
+                                />
 
                             </div>
-                            <CustomInput label="Description" name="Div_Desc" register={register} errors={errors} />
+                            <CustomInput label="Description" name="DivDesc" register={register} errors={errors} />
 
                         </div>
 
@@ -162,16 +245,16 @@ const Division = () => {
 
 
                                         <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                        <td>{a.divName}</td>
-                                        <td>{a.divDesc}</td>
-                                        <td>{a.locName}</td>
+                                        <td>{a.DivName}</td>
+                                        <td>{a.DivDesc}</td>
+                                        <td>{a.LocName}</td>
 
 
                                         <td>
                                             <div className="actions d-flex align-items-center">
-                                                <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
+                                                <Link to="">    <Button className="success" color="success" onClick={() => startEdit(a)}><FaPencilAlt /></Button></Link>
 
-                                                <Button className="error" color="error"><MdDelete /></Button>
+                                                <Button className="error" color="error" onClick={() => handleDelete(a.DivCode)}><MdDelete /></Button>
                                             </div>
                                         </td>
                                     </tr>

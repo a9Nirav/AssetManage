@@ -141,24 +141,24 @@ const UserMasterTable = () => {
 
                         <tbody>
                             {paginatedData.length > 0 ? (
-                                paginatedData.map((vendor, index) => (
-                                    <tr key={vendor.id}>
+                                paginatedData.map((a, index) => (
+                                    <tr key={a.id}>
                                         <td>{index + 1}</td>
-                                        <td>{vendor.userName}</td>
+                                        <td>{a.UserName}</td>
 
 
-                                        <td>{vendor.mobileNo}</td>
-                                        <td>{vendor.emailID}</td>
-                                        <td>{vendor.locName}</td>
-                                        <td>{vendor.divName}</td>
-                                        <td>{vendor.jobTitle}</td>
+                                        <td>{a.mobileNo}</td>
+                                        <td>{a.EmailID}</td>
+                                        <td>{a.LocName}</td>
+                                        <td>{a.DivName}</td>
+                                        <td>{a.JobTitle}</td>
                                         <td>
                                             <div className="actions d-flex align-items-center">
 
                                                 <Button className="secondary" color="secondary"
                                                     onClick={() => {
                                                         setView(true)
-                                                        setMobalData({ ...vendor })
+                                                        setMobalData({ ...a })
 
                                                     }}
                                                 >

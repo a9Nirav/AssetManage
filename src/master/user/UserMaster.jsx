@@ -98,9 +98,9 @@ const UserMaster = () => {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row">
-              <CustomInput label="Name" name="user_Name" register={register} errors={errors} />
-              <CustomInput label="Email" name="email_ID" type="email" register={register} errors={errors} />
-              <CustomInput label="Phone" name="phone_No" type="number" register={register} errors={errors} />
+              <CustomInput label="Name" name="UserName" register={register} errors={errors} />
+              <CustomInput label="Email" name="EmailID" type="email" register={register} errors={errors} />
+              <CustomInput label="Phone" name="PhoneNo" type="number" register={register} errors={errors} />
               <CustomInput label="Job Title" name="job_Title" register={register} errors={errors} />
 
 

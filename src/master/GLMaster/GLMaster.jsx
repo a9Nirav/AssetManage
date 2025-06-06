@@ -15,7 +15,7 @@ import { toast, ToastContainer } from "react-toastify";
 import useSearch from '../../features/useSearch';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { createGLType, fetchGLType } from "../../features/masterApi.js";
+import { createGLType, fetchGLType, updateGLType,deleteGLType } from "../../features/masterApi.js";
 import { useState, useEffect } from "react";
 import { GLValidationSchema } from "../../features/validationSchemas";
 import usePagination from "../../features/usePagination";
@@ -25,6 +25,9 @@ const GLMaster = () => {
     const dispatch = useDispatch()
     const GLtypes = useSelector(state => state.master.GLTypes || []);
     console.log(GLtypes);
+
+
+    const [editId, setEditId] = useState("");
 
     useEffect(() => {
         dispatch(fetchGLType());
@@ -42,18 +45,74 @@ const GLMaster = () => {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(GLValidationSchema),
     });
 
-    const onSubmit = async (data) => {
-        await dispatch(createGLType(data)).unwrap();
-        console.log("Form Data:", data);
-        toast.success("Submit Data Success");
-        dispatch(fetchGLType());
-        reset();
 
+    const startEdit = (a) => {
+        setEditId(a.AccountCode);
+        setValue("GL_Type", a.GLType);
+        setValue("Account_Desc", a.AccountDescription);
+
+
+
+
+    };
+
+    console.log(editId)
+
+    const onSubmit = async (data) => {
+        try {
+            if (editId) {
+                let res1 = await dispatch(updateGLType({ AccountCode: editId, data })).unwrap();
+                toast.success(res1.ErrorDetails.ErrorDescription)
+            } else {
+                let res = await dispatch(createGLType(data)).unwrap();
+                console.log("Form Data:", data);
+                toast.success(res?.ErrorDetails.ErrorDescription || "done");
+            }
+            dispatch(fetchGLType());
+            reset();
+
+        } catch (err) {
+
+            toast.error("Failed to create division");
+            console.error("Submit error:", err);
+        }
+
+    };
+
+
+    const handleDelete = async (AccountCode) => {
+      const GLTypeDelete = GLtypes.find(a => a.AccountCode === AccountCode);
+    
+      if (!GLTypeDelete) {
+        toast.error("GLType not found");
+        return;
+      }
+    
+      if (window.confirm("Are you sure you want to delete this GL Type?")) {
+        try {
+          const response = await dispatch(deleteGLType({
+            AccountCode,
+            data: {
+              GL_Type: GLTypeDelete.GL_Type || "TEST",
+              Account_Desc: GLTypeDelete.Account_Desc || "TEST"
+            }
+          })).unwrap();
+    
+          toast.success(response?.ErrorDetails.ErrorDescription || "GLType deleted successfully!");
+          
+          // Optional: Refresh from backend (good if data changes outside UI)
+          dispatch(fetchGLType());
+        } catch (error) {
+          toast.error(error || "Delete failed");
+          console.error("Delete error:", error);
+        }
+      }
     };
 
 
@@ -103,7 +162,7 @@ const GLMaster = () => {
                                 </select>
                                 <div className="invalid-feedback">{`GL_Type ${errors.GL_Type?.message}`}</div>
                             </div>
-                            <CustomInput label="Account Code" name="AccountCode" register={register} errors={errors} />
+                            {/* <CustomInput label="Account Code" name="AccountCode" register={register} errors={errors} /> */}
 
                             <div className="col-md-6 mb-3">
 
@@ -186,16 +245,16 @@ const GLMaster = () => {
 
 
                                         <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                                        <td>{a.glType}</td>
-                                        <td>{a.accountCode}</td>
-                                        <td>{a.accountDescription}</td>
+                                        <td>{a.GLType}</td>
+                                        <td>{a.AccountCode}</td>
+                                        <td>{a.AccountDescription}</td>
 
 
                                         <td>
                                             <div className="actions d-flex align-items-center">
-                                                <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
+                                                <Link to="">    <Button className="success" color="success" onClick={() => startEdit(a)}><FaPencilAlt /></Button></Link>
 
-                                                <Button className="error" color="error"><MdDelete /></Button>
+                                                <Button className="error" color="error" onClick={() => handleDelete(a.AccountCode)}><MdDelete /></Button>
                                             </div>
                                         </td>
                                     </tr>

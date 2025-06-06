@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material'
+import { useState, useEffect } from 'react';
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +16,7 @@ import Pagination from '@mui/material/Pagination';
 
 import { TaxValidationSchema } from "../../features/validationSchemas";
 import { useDispatch, useSelector } from 'react-redux';
-import { createTaxMaster, fetchTaxMaster } from '../../features/masterApi';
+import { createTaxMaster, fetchTaxMaster, updateTaxMaster, deleteTaxMaster } from '../../features/masterApi';
 import usePagination from "../../features/usePagination";
 
 const TaxMaster = () => {
@@ -23,9 +24,12 @@ const TaxMaster = () => {
     const dispatch = useDispatch();
     const taxMasters = useSelector(state => state.master.Taxs || [])
     console.log(taxMasters)
+    const [editId, setEditId] = useState("");
+
 
     useEffect(() => {
         dispatch(fetchTaxMaster());
+
 
     }, [dispatch]);
 
@@ -34,12 +38,21 @@ const TaxMaster = () => {
 
     const { searchQuery, setSearchQuery, filteredData } = useSearch(taxMasters);
 
+    const startEdit = (a) => {
+        setEditId(a.Taxid);
+        setValue("Taxname", a.TaxName);
+        setValue("Percentage",a.Percentage);
 
+    };
+
+    console.log(editId)
 
     // form validation start
     const {
         register,
         handleSubmit,
+        reset,
+        setValue,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(TaxValidationSchema),
@@ -47,10 +60,71 @@ const TaxMaster = () => {
 
     const onSubmit = async (data) => {
 
-        await dispatch(createTaxMaster(data)).unwrap()
+        try {
+            if (editId) {
+                let res = await dispatch(updateTaxMaster({ Taxid: editId, data })).unwrap();
+                toast.success(res.ErrorDetails.ErrorDescription)
 
-        toast.success("Submit Data Success");
+
+            } else {
+                let res1 = await dispatch(createTaxMaster(data)).unwrap()
+                toast.success(res1?.ErrorDetails?.ErrorDescription || "Tax added successfully!");
+                console.log("no")
+            }
+
+        } catch (err) {
+            toast.error("Failed to create Tax Master");
+            console.error("Submit error:", err);
+
+        }
+
+
+
+
+        dispatch(fetchTaxMaster());
+        reset();
     };
+
+
+
+    const handleDelete = async (id) => {
+        const TaxMasterDelete = taxMasters.find(e => e.Taxid === id);
+        console.log(TaxMasterDelete.TaxName)
+
+
+
+        if (!TaxMasterDelete) {
+            toast.error("Location not found");
+            return;
+        }
+
+
+
+        if (window.confirm(`Are you sure you want to delete this Division? ${TaxMasterDelete.Taxid}`)) {
+            try {
+                const response = await dispatch(deleteTaxMaster({
+                    Taxid:id,
+                    data: {
+                        Taxname: TaxMasterDelete.TaxName,
+                        Percentage: String(TaxMasterDelete.Percentage),
+                    }
+
+
+                })).unwrap();
+                console.log(response);
+
+                toast.success(response?.ErrorDetails.ErrorDescription || "Tax deleted successfully!");
+
+                // Optional: Refresh from backend (good if data changes outside UI)
+                dispatch(fetchTaxMaster());
+            } catch (error) {
+                toast.error(error || "Delete failed");
+                console.error("Delete error:", error);
+            }
+        }
+    };
+
+
 
 
     const {
@@ -154,17 +228,17 @@ const TaxMaster = () => {
                                     <tr key={a.rowNo}>
 
 
-                                        <td>{index + 1}</td>
-                                        <td>{a.taxName}</td>
-                                        <td>{a.percentage}</td>
+                                        <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                        <td>{a.TaxName}</td>
+                                        <td>{a.Percentage}</td>
 
 
 
                                         <td>
                                             <div className="actions d-flex align-items-center">
-                                                <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
+                                                <Link to="">    <Button className="success" color="success" onClick={() => startEdit(a)}><FaPencilAlt /></Button></Link>
 
-                                                <Button className="error" color="error"><MdDelete /></Button>
+                                                <Button className="error" color="error" onClick={() => handleDelete(a.Taxid)}><MdDelete /></Button>
                                             </div>
                                         </td>
                                     </tr>

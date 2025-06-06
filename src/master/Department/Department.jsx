@@ -5,6 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useState, useEffect } from "react";
+import { Autocomplete, TextField } from '@mui/material';
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +16,7 @@ import useSearch from '../../features/useSearch';
 
 import { DepartmentValidationSchema } from "../../features/validationSchemas";
 import { useDispatch, useSelector } from 'react-redux';
-import { createDept, fetchDept, fetchLocations } from '../../features/masterApi';
+import { createDept, fetchDept, fetchLocations, updateDept } from '../../features/masterApi';
 import usePagination from "../../features/usePagination";
 import Pagination from '@mui/material/Pagination';
 
@@ -26,6 +27,7 @@ const Department = () => {
 
     const locations = useSelector(state => state.master.locations);
 
+ const [selectedLocation, setSelectedLocation] = useState(null);
 
 
 
@@ -35,40 +37,71 @@ const Department = () => {
 
 
 
-
-
+    const [editId, setEditId] = useState("");
     const { searchQuery, setSearchQuery, filteredData } = useSearch(Dept);
 
     // form validation start
     const {
         register,
         handleSubmit,
+        setValue,
         reset,
+        getValues,
+
         formState: { errors },
     } = useForm({
         resolver: yupResolver(DepartmentValidationSchema),
     });
 
-    // const onSubmit = (data) => {
-    //     console.log("Form Data:", data);
-    //     toast.success("Submit Data Success");
-    // };
+
+
+    const startEdit = (a) => {
+        setEditId(a.DeptCode);
+        setValue("DeptName", a.DeptName);
+        setValue("DeptDesc", a.DeptDesc);
+        setValue("LocCode", a.LocCode);
+        const matchedLocation = locations.find((loc) => loc.LocName === a.LocName);
+        setSelectedLocation(matchedLocation || null);
+      
+        console.log(a.LocCode)
+    };
+    console.log(editId)
 
     useEffect(() => {
         dispatch(fetchDept());
+        dispatch(fetchLocations());
 
     }, [dispatch]);
 
     const onSubmit = async (data) => {
         console.log("hi")
 
-        await dispatch(createDept(data)).unwrap();
-        toast.success("Dept added successfully!");
+
+        try {
+            let response
+
+            if (editId) {
+                let res = await dispatch(updateDept({ DeptCode: editId, data })).unwrap();
+                toast.success(res?.ErrorDetails?.ErrorDescription);
+            }
+            else {
+                response = await dispatch(createDept(data)).unwrap();
+                console.log(response)
+
+                toast.success(response?.ErrorDetails?.ErrorDescription || "Dept added successfully!");
+
+            }
 
 
+            dispatch(fetchDept());
+            reset();
+            
 
-        dispatch(fetchDept());
-        reset();
+        } catch (error) {
+            toast.error(error || "Failed to add");
+            console.error(error);
+
+        }
 
 
     };
@@ -106,37 +139,69 @@ const Department = () => {
                         <div className="row">
 
 
-                            <CustomInput label="Department Name" name="Dept_Name" register={register} errors={errors} />
+                            <CustomInput label="Department Name" name="DeptName" register={register} errors={errors} />
 
-                            <div className="col-md-6 mb-3">
+                            {/* <div className="col-md-6 mb-3">
                                 <label className="form-label">Location Name:</label>
                                 <select
-                                    className={`form-select form-control ${errors.Loc_Code ? "is-invalid" : ""}`}
-                                    {...register("Loc_Code")}
+                                    className={`form-select form-control ${errors.LocCode ? "is-invalid" : ""}`}
+                                    {...register("LocCode")}
                                     aria-label="Default select example"
                                 >
                                     <option value="">Select a location</option>
                                     {locations.map((loc) => (
-                                        <option key={loc.id} value={loc.locCode}>
-                                            {loc.locName}
+                                        <option key={loc.id} value={String(loc.LocCode)}>
+                                            {loc.LocName}
                                         </option>
                                     ))}
                                 </select>
-                                <div className="invalid-feedback">{`Location  ${errors.Loc_Code?.message}`}</div>
+                                <div className="invalid-feedback">{`Location  ${errors.LocCode?.message}`}</div>
 
-                            </div>
+                            </div> */}
+
 
                             <div className="col-md-6 mb-3">
 
                                 <label className="form-label">Description:</label>
                                 <textarea
                                     type="text"
-                                    className={` form-control ${errors.Dept_Desc ? "is-invalid" : ""}`}
-                                    {...register("Dept_Desc")}
+                                    className={` form-control ${errors.DeptDesc ? "is-invalid" : ""}`}
+                                    {...register("DeptDesc")}
 
                                     placeholder="Enter your name"
                                 />
-                                <div className="invalid-feedback">{`Description ${errors.Dept_Desc?.message}`}</div>
+                                <div className="invalid-feedback">{`Description ${errors.DeptDesc?.message}`}</div>
+
+                            </div>
+
+                            <div className="col-md-6">
+                                <Autocomplete
+                                    options={locations}
+                                    getOptionLabel={(option) => option.LocName}
+                                    value={selectedLocation}
+                                    onChange={(e, value) => {
+                                        setSelectedLocation(value)
+                                        setValue("LocCode", value?.LocCode || "");
+                                    }}
+                                    renderInput={(params) => (
+                                        <>
+                                            <label className="form-label">Location Name</label>
+                                            <TextField
+                                                {...params}
+                                                placeholder="Type to search location"
+                                              
+                                               className={`form-control ${errors?.LocCode ? "is-invalid" : ""}`}
+
+                                            />
+                                            {errors?.LocCode && (
+                                                <div className="invalid-feedback">
+                                                 {`Location Name ${errors?.LocCode.message} `}  
+                                                </div>
+                                            )}
+
+                                        </>
+                                    )}
+                                />
 
                             </div>
 
@@ -200,18 +265,18 @@ const Department = () => {
 
                             {
                                 paginatedData.length > 0 ? (paginatedData.map((a, index) => (
-                                    <tr key={a.rowNo}>
+                                    <tr key={a.RowNo}>
 
 
-                                        <td>{index + 1}</td>
-                                        <td>{a.deptName}</td>
-                                        <td>{a.deptDesc}</td>
-                                        <td>{a.locName}</td>
+                                        <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                                        <td>{a.DeptName}</td>
+                                        <td>{a.DeptDesc}</td>
+                                        <td>{a.LocName}</td>
 
 
                                         <td>
                                             <div className="actions d-flex align-items-center">
-                                                <Link to="">    <Button className="success" color="success"><FaPencilAlt /></Button></Link>
+                                                <Link to="">    <Button className="success" color="success" onClick={() => startEdit(a)}><FaPencilAlt /></Button></Link>
 
                                                 <Button className="error" color="error"><MdDelete /></Button>
                                             </div>

@@ -137,13 +137,13 @@ const VendorMasterTable = () => {
                         <tbody>
                             {paginatedData.length > 0 ? (
                                 paginatedData.map((vendor, index) => (
-                                    <tr key={vendor.rowNo}>
+                                    <tr key={vendor.RowNo}>
                                         <td>{index + 1}</td>
-                                        <td>{vendor.vdrName}</td>
-                                        <td>{vendor.cntctPerson}</td>
-                                        <td>{vendor.phoneNo}</td>
-                                        <td>{vendor.email}</td>
-                                        <td>{vendor.city}</td>
+                                        <td>{vendor.VdrName}</td>
+                                        <td>{vendor.CntctPerson}</td>
+                                        <td>{vendor.PhoneNo}</td>
+                                        <td>{vendor.Email}</td>
+                                        <td>{vendor.City}</td>
 
                                         <td>
                                             <div className="actions d-flex align-items-center">

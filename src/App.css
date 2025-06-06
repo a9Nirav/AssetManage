@@ -17,12 +17,12 @@ body.dark {
 
 
 ::-webkit-scrollbar {
-  width: 5px !important;
-  height: 5px !important;
+  width: 2px !important;
+  height: 2px !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #0858f7 !important;
+  background: gainsboro !important;
 }
 
 ::-webkit-scrollbar-track {
@@ -37,6 +37,26 @@ h5,
 h6,
 p {
   color: #403e57;
+}
+
+
+.css-1tlcqt-MuiAutocomplete-root .MuiOutlinedInput-root{
+  padding:0px 5px !important;
+  /* border: 1px solid #dee2e6; */
+  border-color: #dee2e6 !important;
+}
+
+.Mui-focused fieldset{
+  /* border: 2px solid red !important; */
+  border-color: #dee2e6 !important;
+}
+
+
+
+.form-control:focus{
+  border: 1px solid #9c9d9f !important;
+  box-shadow: none !important;
+
 }
 
 .color1 {

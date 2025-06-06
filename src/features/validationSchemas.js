@@ -66,40 +66,40 @@ export const userValidationSchema = yup.object().shape({
 });
 
 export const vendorValidationSchema = yup.object().shape({
-  vdr_Name: name1,
-  vdr_Desc: required,
-  cntct_Per: name1,
-  phone_No: Phone,
-  email: email,
-  fax_No: yup
+  Vdr_Name: name1,
+  Vdr_Desc: required,
+  Cntct_Per: name1,
+  Phone_No: Phone,
+  Email: email,
+  Fax_No: yup
     .string()
     .matches(
       /^(\+?\d{1,4}[-\s]?)?(\d{3}[-\s]?\d{3}[-\s]?\d{4})$/,
       "Invalid fax number format"
     )
     .required(" number is required"),
-  web_URL: yup
+  Web_URL: yup
     .string()
     .matches(urlRegex, "Invalid URL format")
     .required("Website URL is required"),
-  AccountUnit: number,
-  VisibilityPin: number,
-  country: name1,
-  addr1: required,
-  addr2: required,
-  addr3: required,
-  city: name1,
-  posCode: yup
+  // AccountUnit: number,
+  // VisibilityPin: number,
+  Country: name1,
+  Addr1: required,
+  Addr2: required,
+  Addr3: required,
+  City: name1,
+  PosCode: yup
     .string()
     .matches(/^[A-Za-z0-9]{5,10}$/, "Invalid postal code format")
     .required("Please enter the postal code"),
-  state: name1,
-  // MtnVendor: yup
-  // .boolean()
-  // .oneOf([true],"Mtnvendor Required") ,
-  // supplier: yup
-  // .boolean()
-  // .oneOf([true],"supplier Required") ,
+  State: name1,
+  MtnVndr: yup
+  .boolean()
+  .oneOf([true],"Mtnvendor Required") ,
+  Supplier: yup
+  .boolean()
+  .oneOf([true],"supplier Required") ,
 });
 
 export const CompnayValidationSchema = yup.object().shape({
@@ -153,14 +153,15 @@ export const LocationValidationSchema = yup.object().shape({
 });
 
 export const DivisionValidationSchema = yup.object().shape({
-  div_Name: required,
-  div_Desc: required,
+  DivName: required,
+  DivDesc: required,
+  LocCode:required,
 });
 
 export const GLValidationSchema = yup.object().shape({
-  gL_Type: required,
-  account_Desc: required,
-  accountCode: required,
+  GL_Type: required,
+  Account_Desc: required,
+  // AccountCode: required,
 });
 
 export const AssetTypeValidationSchema = yup.object().shape({
@@ -188,14 +189,14 @@ export const AssetMasterValidationSchema = yup.object().shape({
 });
 
 export const DepartmentValidationSchema = yup.object().shape({
-  dept_Name: required,
-  loc_Code: required,
-  dept_Desc: required,
+  DeptName: required,
+  LocCode: required,
+  DeptDesc: required,
 });
 
 export const TaxValidationSchema = yup.object().shape({
-  taxname: required,
-  percentage: number,
+  Taxname: required,
+  Percentage: number,
 });
 
 // transction validation

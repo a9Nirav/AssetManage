@@ -32,24 +32,40 @@ const VendorMaster = () => {
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
       
     } = useForm({
         resolver: yupResolver(vendorValidationSchema),
-//          defaultValues: {
-//     MtnVendor: false,
-//     supplier: false
-//   }
+
 
     });
 
-    const onSubmit = async (data) => {
+    // const onSubmit = async (data) => {
         
-        await dispatch(createVendor(data)).unwrap();
-        console.log("Form Data:", data);
-        toast.success("Submit Data Success");
+    //     await dispatch(createVendor(data)).unwrap();
+    //     console.log("Form Data:", data);
+    //     toast.success("Submit Data Success");
 
-    };
+    // };  
+
+    const onSubmit = async (data) => {
+  try {
+    const response = await dispatch(createVendor(data)).unwrap();
+    console.log(response)
+    if (response?.ErrorDetails?.ErrorCode === "200") {
+      toast.success(response?.ErrorDetails?.ErrorDescription || "Vendor added successfully!");
+      reset();  
+      // You can also add: reset(); if you want to clear the form
+    } else {
+      toast.error(response?.ErrorDetails?.ErrorDescription || "Failed to add vendor");
+    }
+  } catch (error) {
+    toast.error("Something went wrong. Try again!");
+    console.error("Submit error:", error);
+  }
+};
+
 
 
 

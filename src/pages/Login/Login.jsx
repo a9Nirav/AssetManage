@@ -105,15 +105,17 @@ const Login = () => {
                                             autoFocus
                                         /> */}
 
-                                        <select name="cars" id="cars" 
+                                        <select name="ComCode" id="cars" 
                                         className='form-control my-2'
+                                      
+                                           onChange={handleChange}
 
                                           onFocus={() => setInputIndex(3)}
                                             onBlur={() => setInputIndex(null)}
                                             autoFocus
                                         >
                                             <option value="select company">select Compnay</option>
-                                            <option value="saab">Saab</option>
+                                            <option value="001">Mark</option>
                                             <option value="mercedes">Mercedes</option>
                                             <option value="audi">Audi</option>
                                         </select>

@@ -45,6 +45,7 @@ const Location = () => {
 
 
 
+
     const { searchQuery, setSearchQuery, filteredData } = useSearch(locations);
     // const [locations, setLocations] = useState([]);
     const [editId, setEditId] = useState("");
@@ -81,8 +82,6 @@ const Location = () => {
         console.log("hello")
     };
     console.log(editId)
-
-
 
 
 

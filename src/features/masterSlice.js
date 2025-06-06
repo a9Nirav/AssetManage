@@ -109,52 +109,31 @@ const MasterSlice = createSlice({
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       // dept 
-      .addCase(createDept.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.Dept.push(action.payload); // push actual user object
-        }
-      })
+      // .addCase(createDept.fulfilled, (state, action) => {
+      //   if (action.payload) {
+      //     state.Dept.push(action.payload); 
+      //   }
+      // })
+
+
+
 
     .addCase(fetchDept.fulfilled, (state, action) => {
       state.loading = false;
       state.Depts = action.payload;
     })
 
+
+
     // Divistion 
-    .addCase(createDivi.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.divi.push(action.payload); // push actual user object
-      }
-    })
+    // .addCase(createDivi.fulfilled, (state, action) => {
+    //   if (action.payload) {
+    //     state.divi.push(action.payload); // push actual user object
+    //   }
+    // })
+
+
 
     .addCase(fetchDivi.fulfilled, (state, action) => {
       state.loading = false;
@@ -163,11 +142,11 @@ const MasterSlice = createSlice({
 
 
     // tax Master 
-    .addCase(createTaxMaster.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.taxMaster.push(action.payload); // push actual user object
-      }
-    })
+    // .addCase(createTaxMaster.fulfilled, (state, action) => {
+    //   if (action.payload) {
+    //     state.taxMaster.push(action.payload); // push actual user object
+    //   }
+    // })
 
     .addCase(fetchTaxMaster.fulfilled, (state, action) => {
       state.loading = false;
@@ -175,11 +154,11 @@ const MasterSlice = createSlice({
     })
 
     // GL Type 
-    .addCase(createGLType.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.taxMaster.push(action.payload); // push actual user object
-      }
-    })
+    // .addCase(createGLType.fulfilled, (state, action) => {
+    //   if (action.payload) {
+    //     state.taxMaster.push(action.payload); // push actual user object
+    //   }
+    // })
 
     .addCase(fetchGLType.fulfilled, (state, action) => {
       state.loading = false;
@@ -188,11 +167,11 @@ const MasterSlice = createSlice({
 
 
     // Vendor 
-    .addCase(createVendor.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.taxMaster.push(action.payload);
-      }
-    })
+    // .addCase(createVendor.fulfilled, (state, action) => {
+    //   if (action.payload) {
+    //     state.taxMaster.push(action.payload);
+    //   }
+    // })
 
     .addCase(fetchVendor.fulfilled, (state, action) => {
       state.loading = false;
@@ -216,15 +195,17 @@ const MasterSlice = createSlice({
     //     state.logindata = action.payload.data;
     //   })
     .addCase(getlogin.fulfilled, (state, action) => {
-      const loginData = action.payload.data;
+      const loginData = action.payload.Data;
       state.loginData = loginData;
       console.log(loginData)
 
+
       // Store in localStorage
       localStorage.setItem('auth', JSON.stringify({
-        UserId: loginData.userName,
-        ComCode: loginData.currentCompany
+        UserId: loginData.UserName,
+        ComCode: loginData.CurrentCompany
       }));
+   
     });
 
 
