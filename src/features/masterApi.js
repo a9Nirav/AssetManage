@@ -297,7 +297,7 @@ export const fetchTaxMaster = createAsyncThunk('Tax/fetchAll', async () => {
 export const updateTaxMaster = createAsyncThunk(
   'master/updateTaxMaster',
   async ({ Taxid, data }) => {
-    // Add LocCode to data explicitly
+
     const auth = getAuthInfo();
     const payload = {
       ...data, Taxid: Taxid, UserCode: "001" || '',
@@ -306,13 +306,18 @@ export const updateTaxMaster = createAsyncThunk(
 
 
 
-    const ans = await postData(`${AddTax}`, payload); // returns 204
+    const ans = await postData(`${AddTax}`, payload); 
     console.log(ans.ErrorDetails.ErrorDescription)
-    return ans; // return the sent payload manually
+    return ans; 
 
   }
 
 );
+
+
+
+
+
 
 
 export const deleteTaxMaster = createAsyncThunk(
@@ -327,6 +332,7 @@ export const deleteTaxMaster = createAsyncThunk(
       ComCode: auth?.ComCode || '',
       DeleteStatus: 1,
     };
+
 
     try {
       const response = await postData(`${AddTax}`, payload);
@@ -484,7 +490,7 @@ export const createUser = createAsyncThunk('User/create', async (data) => {
 
   const response = await postData(`${AddUser}`, data);
   console.log("Create User Response:", response);
-  return response.data; // make sure this is the actual data
+  return response.Data; // make sure this is the actual data
 });
 
 

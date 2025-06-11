@@ -8,7 +8,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from '@mui/material/Pagination';
 import { toast, ToastContainer } from "react-toastify";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import { FaUpload } from "react-icons/fa6";
@@ -35,6 +35,7 @@ const Division = () => {
         handleSubmit,
         reset,
         setValue,
+        control,
         formState: { errors },
 
     } = useForm({
@@ -72,7 +73,7 @@ const Division = () => {
             if (editId) {
                 let res1 = await dispatch(updateDivi({ DivCode: editId, data })).unwrap();
                 toast.success(res1.ErrorDetails.ErrorDescription)
-             
+
             } else {
                 const res = await dispatch(createDivi(data)).unwrap();
                 toast.success(res?.ErrorDetails?.ErrorDescription || "Division ");
@@ -157,30 +158,32 @@ const Division = () => {
                         <div className="row">
                             <CustomInput label="Division" name="DivName" register={register} errors={errors} />
                             <div className="col-md-6">
-                                <Autocomplete
-                                    options={locations}
-                                    getOptionLabel={(option) => option.LocName}
-                                    value={selectedLocation}
-                                    onChange={(e, value) => {
-                                        setSelectedLocation(value)
-                                        setValue("LocCode", value?.LocCode || "");
-                                    }}
-                                    renderInput={(params) => (
+                                <Controller
+                                    name="LocCode"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
                                         <>
                                             <label className="form-label">Location Name</label>
-                                            <TextField
-                                                {...params}
-                                                placeholder="Type to search location"
-
-                                                className={`form-control ${errors?.LocCode ? "is-invalid" : ""}`}
-
+                                            <Autocomplete
+                                                options={locations}
+                                                getOptionLabel={(option) => option?.LocName || ""}
+                                                isOptionEqualToValue={(option, value) => option?.LocCode === value?.LocCode}
+                                                value={locations.find((loc) => loc.LocCode === field.value) || null}
+                                                onChange={(event, newValue) => {
+                                                    field.onChange(newValue?.LocCode || ""); // set LocCode
+                                                    setSelectedLocation(newValue);           // optional state
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        placeholder="Type to search location"
+                                                        className={errors?.LocCode ? "is-invalid" : ""}
+                                                        error={!!errors?.LocCode}
+                                                        helperText={errors?.LocCode?.message}
+                                                    />
+                                                )}
                                             />
-                                            {errors?.LocCode && (
-                                                <div className="invalid-feedback">
-                                                    {`Location Name ${errors?.LocCode.message} `}
-                                                </div>
-                                            )}
-
                                         </>
                                     )}
                                 />

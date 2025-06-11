@@ -1,8 +1,8 @@
 import * as yup from "yup";
 const name1 = yup
   .string()
-  .matches(/^[A-Za-z]+$/, "Only alphabets are allowed")
-  .required("is required");
+  .matches(/^[A-Za-z ]+$/, "Only letters and spaces are allowed")
+  .required("Name is required");
 const required = yup.string().required("is required");
 const email = yup.string().email("Invalid email").required("is required");
 const urlRegex = /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?$/;
@@ -96,10 +96,10 @@ export const vendorValidationSchema = yup.object().shape({
   State: name1,
   MtnVndr: yup
   .boolean()
-  .oneOf([true],"Mtnvendor Required") ,
+  ,
   Supplier: yup
   .boolean()
-  .oneOf([true],"supplier Required") ,
+,
 });
 
 export const CompnayValidationSchema = yup.object().shape({

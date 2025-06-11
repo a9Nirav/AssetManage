@@ -12,8 +12,17 @@ const MasterSlice = createSlice({
     locations: [],
     loading: false,
     error: null,
+    editVendor: null,
+    viewVendor:null,
   },
-  reducers: {},
+  reducers: {
+    setEditVendor:(state,action)=>{
+      state.editVendor = action.payload;
+    },
+    setViewVendor:(state,action)=>{
+      state.viewVendor = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     builder
       // Get All
@@ -126,6 +135,8 @@ const MasterSlice = createSlice({
 
 
 
+
+
     // Divistion 
     // .addCase(createDivi.fulfilled, (state, action) => {
     //   if (action.payload) {
@@ -222,4 +233,6 @@ const MasterSlice = createSlice({
 },
 });
 
+
+export const { setEditVendor,setViewVendor } = MasterSlice.actions;
 export default MasterSlice.reducer;

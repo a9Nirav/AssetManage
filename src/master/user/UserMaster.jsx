@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Autocomplete, TextField } from '@mui/material';
 
 import { userValidationSchema } from "../../features/validationSchemas";
 import CustomInput from "../../components/CustomInput/CustomInput"; // Import Reusable Component
@@ -33,6 +34,9 @@ const UserMaster = () => {
   // const [userType, setUserType] = useState(""); // 'login' or 'technician'
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedDivision, setSelectedDivision] = useState(null);
+  const [selectedDept, setSelectedDept] = useState(null);
 
 
   // Toggle password visibility
@@ -49,6 +53,7 @@ const UserMaster = () => {
   const {
     register,
     watch,
+    control,
     handleSubmit,
     formState: { errors },
     setValue, // Needed for setting default values
@@ -98,53 +103,124 @@ const UserMaster = () => {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row">
-              <CustomInput label="Name" name="UserName" register={register} errors={errors} />
-              <CustomInput label="Email" name="EmailID" type="email" register={register} errors={errors} />
-              <CustomInput label="Phone" name="PhoneNo" type="number" register={register} errors={errors} />
+              <CustomInput label="Name" name="user_Name" register={register} errors={errors} />
+              <CustomInput label="Email" name="email_ID" type="email" register={register} errors={errors} />
+              <CustomInput label="Phone" name="phone_No" type="number" register={register} errors={errors} />
               <CustomInput label="Job Title" name="job_Title" register={register} errors={errors} />
 
 
-              {/* Location Dropdown */}
+              {/* Division Dropdown */}
               <div className="col-md-6 mb-3">
-                <label className="form-label">Location:<sup className="text-red-500">*</sup></label>
+                {/* <label className="form-label">Location:<sup className="text-red-500">*</sup></label>
                 <select
                   className={`form-select form-control ${errors.loc_Code ? "is-invalid" : ""}`}
                   {...register("loc_Code")}
                 >
                   <option value="">Select a location</option>
                   {locations.map((loc) => (
-                    <option key={loc.id} value={loc.locCode}>
-                      {loc.locName}
+                    <option key={loc.id} value={loc.LocCode}>
+                      {loc.LocName}
                     </option>
                   ))}
                 </select>
-                <div className="invalid-feedback">{errors.selectLocation?.message}</div>
+                <div className="invalid-feedback">{errors.selectLocation?.message}</div> */}
+                <Autocomplete
+                  options={division}
+                  getOptionLabel={(option) => option.DivName}
+                  value={selectedDivision}
+                  onChange={(e, value) => {
+                    setSelectedDivision(value)
+                    setValue("DivCode", value?.DivCode || "");
+                  }}
+                  renderInput={(params) => (
+                    <>
+                      <label className="form-label">Division Name</label>
+                      <TextField
+                        {...params}
+                        placeholder="Type to search Division"
+
+                        className={`form-control ${errors?.div_Code ? "is-invalid" : ""}`}
+
+                      />
+                      {errors?.div_Code && (
+                        <div className="invalid-feedback">
+                          {` ${errors?.div_Code.message} `}
+                        </div>
+                      )}
+
+                    </>
+                  )}
+                />
+
               </div>
 
-              {/* Division Dropdown */}
+              {/* Location Dropdown */}
               <div className="col-md-6 mb-3">
-                <label className="form-label">Division:<sup className="text-red-500">*</sup></label>
-                <select className={`form-select form-control ${errors.div_Code ? "is-invalid" : ""}`} {...register("div_Code")}>
-                  {division.map((divi) => (
-                    <option key={divi.id} value={divi.divName}>
-                      {divi.divName}
-                    </option>
-                  ))}
-                </select>
-                <div className="invalid-feedback">{errors.div_Code?.message}</div>
+                <Controller
+                  name="LocCode"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <>
+                      <label className="form-label">Location Name</label>
+                      <Autocomplete
+                        options={locations}
+                        getOptionLabel={(option) => option?.LocName || ""}
+                        isOptionEqualToValue={(option, value) => option?.LocCode === value?.LocCode}
+                        value={locations.find((loc) => loc.LocCode === field.value) || null}
+                        onChange={(event, newValue) => {
+                          field.onChange(newValue?.LocCode || ""); // set LocCode
+                          setSelectedLocation(newValue);           // optional state
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder="Type to search location"
+                            className={errors?.loc_Code ? "is-invalid" : ""}
+                            error={!!errors?.loc_Code}
+                            helperText={errors?.loc_Code?.message}
+                          />
+                        )}
+                      />
+                    </>
+                  )}
+                />
               </div>
 
               {/* Department Dropdown */}
               <div className="col-md-6 mb-3">
-                <label className="form-label">Department:<sup className="text-red-500">*</sup></label>
-                <select className={`form-select form-control ${errors.dept_Code ? "is-invalid" : ""}`} {...register("dept_Code")}>
-                  {Dept.map((Dept) => (
-                    <option key={Dept.id} value={Dept.deptCode}>
-                      {Dept.deptName}
-                    </option>
-                  ))}
-                </select>
-                <div className="invalid-feedback">{errors.dept_Code?.message}</div>
+                <Controller
+                  name="dept_Code"
+                  control={control}
+                  rules={{ required: "is required" }}
+                  render={({ field }) => (
+                    <Autocomplete
+                      options={Dept}
+                      getOptionLabel={(option) => option.DeptName || ""}
+                      onChange={(e, value) => {
+                        field.onChange(value?.DeptCode || "");
+                        setSelectedDept(value);
+                      }}
+                      value={Dept.find((d) => d.DeptCode === field.value) || null}
+                      renderInput={(params) => (
+                        <>
+                          <label className="form-label">Department Name</label>
+                          <TextField
+                            {...params}
+                            placeholder="Type to search Department"
+                            className={`form-control ${errors?.dept_Code ? "is-invalid" : ""}`}
+                          />
+                          {errors?.dept_Code && (
+                            <div className="invalid-feedback">
+                              {`Department Name ${errors?.dept_Code.message}`}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    />
+                  )}
+                />
+
               </div>
 
               {/* Radio Button for Role Selection */}
@@ -152,13 +228,13 @@ const UserMaster = () => {
 
                 <input type="checkbox" {...register('services')} />
                 <label className="ms-2 me-3">   Services  </label>
-               
-              
 
-        
-                  <input type="checkbox" {...register('login')} />
-                         <label className="ms-2"> Login   </label>
-             
+
+
+
+                <input type="checkbox" {...register('login')} />
+                <label className="ms-2"> Login   </label>
+
               </div>
 
 

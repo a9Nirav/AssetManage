@@ -1,10 +1,11 @@
 import { Button } from '@mui/material'
 import { React, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { IoSearch } from "react-icons/io5";
 import { toast, ToastContainer } from "react-toastify";
 import useSearch from '../../features/useSearch';
 import TableModal from '../../components/TableModal/TableModal';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -15,15 +16,34 @@ import { FaEye } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Pagination from '@mui/material/Pagination';
-import { fetchUser, fetchVendor } from "../../features/masterApi.js"
+import { fetchVendor } from "../../features/masterApi.js"
 import { useDispatch, useSelector } from 'react-redux';
 import usePagination from "../../features/usePagination";
+import { setEditVendor,setViewVendor } from '../../features/masterSlice.js';
+
 
 
 
 
 const VendorMasterTable = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleEdit = (vendor) =>{
+        console.log(vendor)
+        // navigate("/Master/VendorMaster", {state:vendor})
+        dispatch(setEditVendor(vendor))
+        navigate("/Master/VendorMaster") 
+    }
+
+    const handleView = (vendor)=>{
+        dispatch(setViewVendor(vendor));
+        navigate("/Master/VendorMaster")
+    }
+
+
+    
+   
 
     const Vendors = useSelector(state => state.master.Vendors || [])
 
@@ -72,15 +92,7 @@ const VendorMasterTable = () => {
 
 
 
-            {
-                view && <TableModal {...{
-                    setView,
-                    MobalData,
-                    title: "Vendor Details"
-                }}
-
-                />
-            }
+         
 
             <div className='right-content w-100'>
 
@@ -93,7 +105,7 @@ const VendorMasterTable = () => {
                 </div>
 
 
-                <div className="card shadow border-0 p-4 mt-3 table-responsive mt-3">
+                <div className="card shadow border-0 p-4 mt-3 table-responsive">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         <div className="searchBox d-flex align-items-center w-25">
                             <IoSearch className="mr-2" />
@@ -149,21 +161,22 @@ const VendorMasterTable = () => {
                                             <div className="actions d-flex align-items-center">
 
                                                 <Button className="secondary" color="secondary"
-                                                    onClick={() => {
-                                                        setView(true)
-                                                        setMobalData({ ...vendor })
+                                                    // onClick={() => {
+                                                    //     setView(true)
+                                                    //     setMobalData({ ...vendor })
 
-                                                    }}
+                                                    // }}
+                                                    onClick={()=>handleView(vendor)}
                                                 >
                                                     <FaEye />
                                                 </Button>
 
 
-                                                <Link to="/Master/UserMaster">
-                                                    <Button className="success" color="success">
+                                               
+                                                    <Button className="success" color="success" onClick={()=>handleEdit(vendor)}>
                                                         <FaPencilAlt />
                                                     </Button>
-                                                </Link>
+                                            
                                                 <Button className="error" onClick={notify} color="error">
                                                     <MdDelete />
                                                 </Button>

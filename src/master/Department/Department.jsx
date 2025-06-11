@@ -95,6 +95,7 @@ const Department = () => {
 
             dispatch(fetchDept());
             reset();
+            setSelectedLocation(null);
             
 
         } catch (error) {

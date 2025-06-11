@@ -1490,7 +1490,7 @@ body.light .tags li span {
 }
 
 
-.ratingSection {
+/* .ratingSection {
   width: 500px;
 }
 
@@ -1600,7 +1600,7 @@ body.light .reviewForm textarea::-webkit-input-placeholder {
   color: rgba(0, 0, 0, 0.5);
 }
 
-
+ */
 
 .form .form-group {
   margin-bottom: 25px;
