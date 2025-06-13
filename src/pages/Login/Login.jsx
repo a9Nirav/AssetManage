@@ -47,6 +47,7 @@ const Login = () => {
         e.preventDefault(); // prevent form reload
         try {
             const result = await dispatch(getlogin(formData)).unwrap();
+            console.log(result)
             // navigate after successful login
             if (result) navigate('/dashboard');
             console.log(result)

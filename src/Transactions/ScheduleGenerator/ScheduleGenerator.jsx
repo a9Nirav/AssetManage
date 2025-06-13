@@ -59,6 +59,8 @@ const ScheduleGenerator = () => {
                 errors={errors}
               />
 
+              
+
               <div className="col-md-6 mb-3">
                 <label className="form-label">Type:</label>
                 <select

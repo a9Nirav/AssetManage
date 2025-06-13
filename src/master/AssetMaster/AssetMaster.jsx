@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import Button from "@mui/material/Button";
+import React, { useState, useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-
+import { Autocomplete, TextField, Button, Chip, Box } from "@mui/material";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchVendor, fetchGLType } from "../../features/masterApi.js"
 import { AssetMasterValidationSchema } from "../../features/validationSchemas";
 import CustomInput from "../../components/CustomInput/CustomInput"; // Import Reusable Component
 import { Visibility, VisibilityOff } from "@mui/icons-material"; // Eye Icons from MUI
@@ -13,7 +15,45 @@ import { Visibility, VisibilityOff } from "@mui/icons-material"; // Eye Icons fr
 import { FaUpload } from "react-icons/fa6";
 
 const AssetMaster = () => {
+    const dispatch = useDispatch();
+    const [selectedVendor, setSelectedVendor] = useState(null);
+    const [maintaianceVendor, setmaintaianceVendor] = useState(null)
+    const [addedVendors, setAddedVendors] = useState([]);
+    const [maintaianceVendorList, setmaintaianceVendorList] = useState([])
+    const [SelectedGLType, setSelectedGLType] = useState(null);
+    console.log(maintaianceVendorList)
 
+
+    const Vendor = useSelector(state => state.master.Vendors || [])
+    const GLtypes = useSelector(state => state.master.GLTypes || []);
+
+
+    const handleAddVendor = () => {
+        if (selectedVendor && !addedVendors.some(v => v.VdrCode === selectedVendor.VdrCode)) {
+            setAddedVendors((prev) => [...prev, selectedVendor])
+        } else {
+            toast.warn("Already Selected")
+        }
+
+    }
+
+    const addMaintanceVendor = () => {
+        if (maintaianceVendor && !maintaianceVendorList.some(v => v.a === maintaianceVendor.VdrCode)) {
+            setmaintaianceVendorList((prev) => [...prev, { a: maintaianceVendor.VdrCode, b: maintaianceVendor.VdrName }])
+        } else {
+            toast.warn("Already Selected")
+        }
+    }
+
+    const handleRemoveVendor = (code) => {
+        setAddedVendors((prev) => prev.filter((v) => v.VdrCode !== code));
+    };
+
+
+    useEffect(() => {
+        dispatch(fetchVendor())
+        dispatch(fetchGLType());
+    }, [dispatch])
 
 
 
@@ -24,6 +64,7 @@ const AssetMaster = () => {
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
 
     } = useForm({
@@ -33,7 +74,13 @@ const AssetMaster = () => {
 
     const onSubmit = (data) => {
 
-        console.log("Form Data:", data);
+        const finalData = {
+            ...data,
+            maintaianceVendorList,
+            addedVendors: addedVendors.map(v => v.VdrCode)
+        }
+
+        console.log("Form Data:", finalData);
         toast.success("Submit Data Success");
     };
 
@@ -97,7 +144,8 @@ const AssetMaster = () => {
 
                                     <div className="col-md-6 col-6">
                                         <select
-                                            className={`form-select form-control`}
+                                            className={`form-select form-control ${errors.warrentyYear ? "is-invalid" : ""} `}
+                                            {...register("warrentyYear")}
 
                                             aria-label="Default select example"
                                         >
@@ -112,13 +160,14 @@ const AssetMaster = () => {
 
 
                                         </select>
+                                        <div className="invalid-feedback">{`Yaer ${errors.warrentyYear?.message}`}</div>
 
                                     </div>
 
                                     <div className="col-md-6 col-6">
                                         <select
-                                            className={`form-select form-control`}
-
+                                            className={`form-select form-control ${errors.warrentyMonth ? "is-invalid" : ""}`}
+                                            {...register("warrentyMonth")}
                                             aria-label="Default select example"
                                         >
                                             <option value="">Select Month</option>
@@ -131,6 +180,8 @@ const AssetMaster = () => {
                                             <option value="6">6</option>
 
                                         </select>
+
+                                        <div className="invalid-feedback">{`month ${errors.warrentyMonth?.message}`}</div>
 
                                     </div>
 
@@ -151,8 +202,8 @@ const AssetMaster = () => {
 
                                     <div className="col-md-6 col-6">
                                         <select
-                                            className={`form-select form-control`}
-
+                                            className={`form-select form-control ${errors.periodYear ? "is-invalid" : ""}`}
+                                            {...register("periodYear")}
                                             aria-label="Default select example"
                                         >
                                             <option value="">Select Years</option>
@@ -166,13 +217,14 @@ const AssetMaster = () => {
 
 
                                         </select>
+                                        <div className="invalid-feedback">{`Period ${errors.periodYear?.message}`}</div>
 
                                     </div>
 
                                     <div className="col-md-6 col-6">
                                         <select
-                                            className={`form-select form-control`}
-
+                                            className={`form-select form-control ${errors.periodMonth ? "is-invalid" : ""}`}
+                                            {...register("periodMonth")}
                                             aria-label="Default select example"
                                         >
                                             <option value="">Select Month</option>
@@ -185,6 +237,7 @@ const AssetMaster = () => {
                                             <option value="6">6</option>
 
                                         </select>
+                                        <div className="invalid-feedback">{`month ${errors.periodMonth?.message}`}</div>
 
                                     </div>
 
@@ -247,7 +300,7 @@ const AssetMaster = () => {
 
                             {/* vendors  */}
 
-                            <div className="col-md-12 mb-3 align-items-end ">
+                            {/* <div className="col-md-12 mb-3 align-items-end ">
                                 <label className="form-label d-block">Vendor:<sup className="text-red-500">*</sup></label>
 
 
@@ -275,41 +328,117 @@ const AssetMaster = () => {
 
                                 </div>
 
+                            </div> */}
+
+
+                            <div className="col-md-6 mb-3">
+                                <Controller
+                                    name=""
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <>
+                                            <label className="form-label">Vendor Name:<sup className="text-red-500">*</sup></label>
+                                            <div className="d-flex">
+                                                <Autocomplete
+                                                    className="w-100"
+                                                    options={Vendor}
+                                                    getOptionLabel={(option) => option?.VdrName || ""}
+                                                    isOptionEqualToValue={(option, value) => option?.VdrCode === value?.VdrCode}
+                                                    value={Vendor.find((loc) => loc.VdrCode === field.value) || null}
+                                                    onChange={(e, newValue) => setSelectedVendor(newValue)}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Type to search Vendors"
+
+
+                                                        />
+                                                    )}
+                                                />
+                                                <button type="button" onClick={handleAddVendor} className="btn btn-dark">
+                                                    Add
+                                                </button>
+
+
+
+                                            </div>
+                                            {/* List of Added Vendors */}
+                                            <Box className="mt-3" sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                                                {addedVendors.map((vendor) => (
+                                                    <Chip
+                                                        key={vendor.VdrCode || index}
+                                                        label={vendor.VdrName}
+                                                        onDelete={() => handleRemoveVendor(vendor.VdrCode)}
+                                                        className=""
+                                                    />
+                                                ))}
+                                            </Box>
+
+                                        </>
+                                    )}
+                                />
+
+
                             </div>
+
+
+
+
+
+
+
 
 
                             {/* maintaiance vendor  */}
 
-                            <div className="col-md-12 mb-3 align-items-end ">
-                                <label className="form-label d-block">Maintenance Vendor:<sup className="text-red-500">*</sup></label>
+                            <div className="col-md-6 mb-3">
+                                <Controller
+                                    name=""
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <>
+                                            <label className="form-label">Vendor Name:<sup className="text-red-500">*</sup></label>
+                                            <div className="d-flex">
+                                                <Autocomplete
+                                                    className="w-100"
+                                                    options={Vendor}
+                                                    getOptionLabel={(option) => option?.VdrName || ""}
+                                                    isOptionEqualToValue={(option, value) => option?.VdrCode === value?.VdrCode}
+                                                    value={Vendor.find((loc) => loc.VdrCode === field.value) || null}
+                                                    onChange={(e, newValue) => setmaintaianceVendor(newValue)}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Type to search Vendors"
 
 
-                                <div className="d-block">
-
-
-                                    <input className=" me-2" type="checkbox" name='assetType1' value="Consumable" id="Consumable"
-
-                                    />
-                                    <label className="mb-0 me-2" for="Consumable">
-                                        ABC
-                                    </label>
-
-                                    <input className=" me-2" type="checkbox" name='assetType2' value="FixedAsset" id="FixedAsset" />
-                                    <label className="mb-0 me-2" for="FixedAsset">
-                                        PQR
-                                    </label>
-
-                                    <input className=" me-2 " type="checkbox" name='assetType3' value="GroupAsset" id="GroupAsset" />
-                                    <label className="mb-0 " for="GroupAsset">
-                                        XYZ
-                                    </label>
+                                                        />
+                                                    )}
+                                                />
+                                                <button type="button" onClick={addMaintanceVendor} className="btn btn-dark">
+                                                    Add
+                                                </button>
 
 
 
-                                </div>
+                                            </div>
+                                            {/* List of Added Vendors */}
+                                            <Box className="mt-3" sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                                                {maintaianceVendorList.map((vendor) => (
+                                                    <Chip
+                                                        key={vendor.a}
+                                                        label={vendor.b}
+                                                        onDelete={() => handleRemoveVendor(vendor.a)}
+                                                        className=""
+                                                    />
+                                                ))}
+                                            </Box>
 
-
-
+                                        </>
+                                    )}
+                                />
 
 
                             </div>
@@ -317,15 +446,48 @@ const AssetMaster = () => {
 
 
 
-                            {/* Division Dropdown */}
+
+
+
+
+
+                            {/* gl type  */}
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">GL Type:<sup className="text-red-500">*</sup></label>
-                                <select className={`form-select form-control ${errors.GLType ? "is-invalid" : ""}`} {...register("GLType")}>
-                                    <option value="">Select a division</option>
-                                    <option value="1">Software Division</option>
-                                    <option value="2">Hardware Division</option>
-                                </select>
-                                <div className="invalid-feedback">{`GL Type${errors.GLType?.message}`}</div>
+                                <Controller
+                                    name="GLType"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <>
+                                            <label className="form-label">Location Name</label>
+                                            <Autocomplete
+                                                options={GLtypes}
+                                                getOptionLabel={(option) => option?.AccountDescription || ""}
+                                                isOptionEqualToValue={(option, value) => option?.AccountDescription === value?.AccountDescription}
+                                                value={GLtypes.find((e) => e.AccountDescription === field.value) || null}
+                                                onChange={(event, newValue) => {
+                                                    field.onChange(newValue?.AccountDescription || "");
+                                                    setSelectedGLType(newValue);
+                                                }}
+                                                renderInput={(params) => (
+                                                    <>
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Type to search GL Type"
+                                                            className={`form-control ${errors?.GLType ? "is-invalid" : ""}`}
+                                                        />
+                                                        {errors?.GLType && (
+                                                            <div className="invalid-feedback d-block">
+                                                                {`GL Type ${errors?.GLType.message}`}
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            />
+                                        </>
+                                    )}
+                                />
+
                             </div>
 
 

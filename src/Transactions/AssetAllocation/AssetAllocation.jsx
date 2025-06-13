@@ -45,10 +45,21 @@ const AssetAllocation = () => {
   };
 
 
+const imgprev = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const imgURL = URL.createObjectURL(file);
+            setImagePreview(imgURL)
+
+        } else {
+            setImagePreview(null);
+        }
+    }
+
 
   const clearFile = () => {
     resetField("image"); // Clears from react-hook-form
-     setImagePreview(null);
+    setImagePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Clears the actual input
     }
@@ -159,8 +170,8 @@ const AssetAllocation = () => {
               )}
 
 
-              <CustomInput label="Warranty Expiry Date" type='date' name="fromDate" register={register} errors={errors} />
-              <CustomInput label="Purchase Value" name="toData" register={register} errors={errors} />
+              <CustomInput label="Warranty Expiry Date" type='date' name="warranty" register={register} errors={errors} />
+              <CustomInput label="Purchase Value" name="purValue" register={register} errors={errors} />
 
 
               <div className="col-md-6 mb-3">
@@ -172,16 +183,8 @@ const AssetAllocation = () => {
                   ref={fileInputRef}
                   className={`form-control ${errors.image ? "is-invalid" : ""}`}
                   {...register("image")}
-                  accept="image/*" // Only allows images
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const imageURL = URL.createObjectURL(file);
-                      setImagePreview(imageURL);
-                    } else {
-                      setImagePreview(null);
-                    }
-                  }}
+                  accept="image/*" 
+                  onChange={imgprev}
                 />
                 <div className="invalid-feedback">{errors.image?.message}</div>
 
@@ -199,7 +202,7 @@ const AssetAllocation = () => {
                         style={{ width: "200px", height: "auto", borderRadius: "8px", border: "1px solid #ccc" }}
                       />
                     </div>
-                    <button onClick={clearFile} className='btn  py-0 px-2 btn-danger' >Clear</button>
+                    <button onClick={clearFile} className='btn py-0 px-2 btn-danger' >Clear</button>
                   </>
                 )}
               </div>

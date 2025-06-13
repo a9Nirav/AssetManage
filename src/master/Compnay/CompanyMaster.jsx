@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import Button from "@mui/material/Button";
+
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { useForm } from "react-hook-form";
+import { MdDelete } from "react-icons/md";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Autocomplete, TextField, Button } from "@mui/material";
 
 import { CompnayValidationSchema } from "../../features/validationSchemas";
 import CustomInput from "../../components/CustomInput/CustomInput"; // Import Reusable Component
@@ -16,15 +18,37 @@ import { IoAddCircleOutline } from "react-icons/io5";
 
 
 const CompanyMaster = () => {
-    const [selectDate, setSelectDate] = useState("");
-    const [tableData, settableData] = useState([])
+    const indianStates = [
+        "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+        "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+        "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+        "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+        "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+        "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi", "Puducherry",
+    ];
+
+    const [selectedState, setSelectedState] = useState("");
+
+    // const [selectDate, setSelectDate] = useState("");
+    const [incomeDate, setIncomeDate] = useState("");
+    const [bookDate,SetBookdate] = useState("");
+    const [incomeTaxData, setIncomeTaxData] = useState([]);
+    const [bookTaxData, setBookTaxData] = useState([]);
+    const [imagePreview, setImagePreview] = useState(null)
 
 
-    const handleAddDate = () => {
 
-        if (!selectDate) return; // Prevent adding empty dates
 
-        const CurrentDate = new Date(selectDate);
+
+
+
+
+
+    const handleAddDate = (type,dateValue) => {
+
+        if (!dateValue) return; // Prevent adding empty dates
+
+        const CurrentDate = new Date(dateValue);
         const year1 = CurrentDate.toLocaleDateString("en-GB");
         // Set the second year by adding one year and subtracting one day
         const nextYearDate = new Date(CurrentDate);
@@ -33,13 +57,32 @@ const CompanyMaster = () => {
 
         const year2 = nextYearDate.toLocaleDateString("en-GB");
 
-        settableData((prevData) => [...prevData, { year1, year2 }]);
-        setSelectDate(""); // Reset input field
+        const newRow = { year1, year2 };
 
 
+        if (type === "income") {
+            setIncomeTaxData((prev) => [...prev, newRow])
+        } else if (type === "book") {
+            setBookTaxData((prev) => [...prev, newRow])
+        }
 
 
+        // setSelectDate(""); // Reset input field
 
+
+    }
+
+    const handelDelete = (index, type) => {
+
+        if (type === "income") {
+            const updated = [...incomeTaxData];
+            updated.splice(index, 1);
+            setIncomeTaxData(updated);
+        } else if (type === "book") {
+            const updated = [...bookTaxData];
+            updated.splice(index, 1);
+            setBookTaxData(updated);
+        }
 
     }
 
@@ -48,6 +91,8 @@ const CompanyMaster = () => {
     const {
         register,
         handleSubmit,
+        resetField,
+        control,
         formState: { errors },
 
     } = useForm({
@@ -56,9 +101,34 @@ const CompanyMaster = () => {
     });
 
 
+    const imgprev = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const imgURL = URL.createObjectURL(file);
+            setImagePreview(imgURL)
+
+        } else {
+            setImagePreview(null);
+        }
+    }
+
+    const clearLogo = () => {
+        resetField("image")
+        setImagePreview(null);
+
+    }
+
+
     const onSubmit = (data) => {
 
-        console.log("Form Data:", data);
+        const finalData = {
+            ...data,
+            incomeTaxData,
+            bookTaxData
+
+        }
+
+        console.log("Form Data:", finalData);
         toast.success("Submit Data Success");
     };
     return (
@@ -101,19 +171,46 @@ const CompanyMaster = () => {
                             <CustomInput label="Address2" name="Address2" register={register} errors={errors} />
                             <CustomInput label="PostalCode" name="PostalCode" register={register} errors={errors} />
                             <CustomInput label="Address3" name="Address3" register={register} errors={errors} />
-                            <CustomInput label="State" name="State" register={register} errors={errors} />
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">
-                                    Logo: <sup className="text-red-500">*</sup>
-                                </label>
-                                <input
-                                    type="file"
-                                    className={`form-control ${errors.image ? "is-invalid" : ""}`}
-                                    {...register("image")}
-                                    accept="image/*" // Only allows images
+                                <Controller
+                                    name="State"
+                                    control={control}
+                                    defaultValue=""
+                                    rules={{ required: "State is required" }}
+                                    render={({ field }) => (
+                                        <>
+                                            <label className="form-label">State</label>
+                                            <Autocomplete
+                                                options={indianStates}
+                                                freeSolo
+                                                value={field.value || ""}
+                                                onChange={(event, newValue) => field.onChange(newValue || "")}
+                                                renderInput={(params) => (
+                                                    <>
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Type or select state"
+
+
+                                                            className={`form-control ${errors?.State ? "is-invalid" : ""}`}
+
+                                                        />
+                                                        {errors?.State && (
+                                                            <div className="invalid-feedback d-block">
+                                                                {errors?.State.message}
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            />
+                                        </>
+                                    )}
                                 />
-                                <div className="invalid-feedback">{errors.image?.message}</div>
+
+
                             </div>
+
+
 
                             <CustomInput label="Signing Authority" name="SigningAuthority" register={register} errors={errors} />
 
@@ -147,15 +244,15 @@ const CompanyMaster = () => {
                                 <input
                                     type="date"
                                     className="form-control d-inline"
-                                    onChange={(e) => setSelectDate(e.target.value)}
-                                    value={selectDate}
+                                    onChange={(e) => setIncomeDate(e.target.value)}
+                                    value={incomeDate}
                                     required
 
                                     style={{ width: "200px" }}
                                 />
 
 
-                                <div className="btn  ml-4 btn" onClick={handleAddDate}>
+                                <div className="btn  ml-4 btn" onClick={() => handleAddDate("income",incomeDate)}>
                                     ADD
                                 </div>
 
@@ -171,12 +268,14 @@ const CompanyMaster = () => {
                                     <tbody>
 
 
-                                        {tableData.map((row, index) => (
+                                        {incomeTaxData.map((row, index) => (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>{row.year1}</td>
                                                 <td>{row.year2}</td>
-                                                <td>delete</td>
+                                                <td>
+                                                    <button className="text-red-500 p-0" onClick={() => { handelDelete(index, "income") }}>DEL</button>
+                                                </td>
                                             </tr>
                                         ))}
 
@@ -189,20 +288,20 @@ const CompanyMaster = () => {
 
                             <div className="col-md-6 mb-3">
 
-                                <label className="form-label"> For Income Tax:</label>
+                                <label className="form-label"> For Book:</label>
                                 <br />
                                 <input
                                     type="date"
                                     className="form-control d-inline"
-                                    onChange={(e) => setSelectDate(e.target.value)}
-                                    value={selectDate}
+                                    onChange={(e) => SetBookdate(e.target.value)}
+                                    value={bookDate}
                                     required
 
                                     style={{ width: "200px" }}
                                 />
 
 
-                                <div className="btn  ml-4 btn" onClick={handleAddDate}>
+                                <div className="btn  ml-4 btn" onClick={() => handleAddDate("book",bookDate)}>
                                     ADD
                                 </div>
 
@@ -218,12 +317,14 @@ const CompanyMaster = () => {
                                     <tbody>
 
 
-                                        {tableData.map((row, index) => (
+                                        {bookTaxData.map((row, index) => (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>{row.year1}</td>
                                                 <td>{row.year2}</td>
-                                                <td>delete</td>
+                                                <td>
+                                                    <button className="text-red-500 p-0" onClick={() => handelDelete(index, "book")}>DEL</button>
+                                                </td>
                                             </tr>
                                         ))}
 
@@ -232,6 +333,39 @@ const CompanyMaster = () => {
 
 
                                 </table>
+                            </div>
+
+
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">
+                                    Logo: <sup className="text-red-500">*</sup>
+                                </label>
+                                <input
+                                    type="file"
+                                    className={`form-control ${errors.image ? "is-invalid" : ""}`}
+                                    {...register("image")}
+                                    accept="image/*"
+                                    onChange={imgprev}
+                                />
+                                <div className="invalid-feedback">{errors.image?.message}</div>
+
+
+                            </div>
+
+
+                            <div className="col-md-6">
+                                {
+                                    imagePreview && (
+                                        <>
+                                            <div className="mt-2">
+                                                <img src={imagePreview} alt="Preview"
+                                                    style={{ width: "200px", height: "auto" }} />
+                                            </div>
+
+                                            <button onClick={clearLogo} className="btn py-0 px-2 btn-danger">Clear</button>
+                                        </>
+                                    )
+                                }
                             </div>
 
 

@@ -16,37 +16,36 @@ const Phone = yup
   .required("Phone number is required");
 
 export const userValidationSchema = yup.object().shape({
-  user_Name: name1,
-  email_ID: yup.string().email("Invalid email").required("is required"),
-  job_Title: yup
+  User_Name: name1,
+  Email_ID: yup.string().email("Invalid email").required("is required"),
+  Job_Title: yup
     .string()
     .required("is required")
     .min(3, "Job Title must be at least 3 characters"),
-  phone_No: yup
+  Phone_No: yup
     .string()
     .matches(/^\d{10}$/, "Phone must be exactly 10 digits")
     .required("Phone number is required"),
-  loc_Code: yup.string().required("Location is required"),
-  div_Code: yup.string().required("Division is required"),
-  dept_Code: yup.string().required("Department is required"),
+  Loc_Code: yup.string().required("Location is required"),
+  Div_Code: yup.string().required("Division is required"),
+  Dept_Code: yup.string().required("Department is required"),
 
-  // Apply validation only when `userType` is "login"
-  userType: yup.string().required("User type is required"),
+  Login: yup.boolean(),
 
-  userid: yup.string().when("userType", {
-    is: "login",
+  Userid: yup.string().when("Login", {
+    is: true,
     then: (schema) => schema.required("User ID is required"),
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  rollid: yup.string().when("userType", {
-    is: "login",
+  Rollid: yup.string().when("Login", {
+    is: true,
     then: (schema) => schema.required("Role is required"),
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  userPwd: yup.string().when("userType", {
-    is: "login",
+  UserPwd: yup.string().when("Login", {
+    is: true,
     then: (schema) =>
       schema
         .matches(
@@ -57,13 +56,22 @@ export const userValidationSchema = yup.object().shape({
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  // confirmPassword: yup.string().when("userType", {
-  //     is: "login",
-  //     then: (schema) =>
-  //         schema.oneOf([yup.ref("password"), null], "Passwords must match").required("Confirm Password is required"),
-  //     otherwise: (schema) => schema.notRequired(),
-  // }),
+  confirmPassword: yup.string().when("Login", {
+    is: true,
+    then: (schema) =>
+      schema
+        .oneOf([yup.ref("UserPwd"), null], "Passwords must match")
+        .required("Confirm Password is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+
+  ComCode: yup.string().when("Login", {
+    is: true,
+    then: (schema) => schema.required("Company Code is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
+
 
 export const vendorValidationSchema = yup.object().shape({
   Vdr_Name: name1,
@@ -95,11 +103,11 @@ export const vendorValidationSchema = yup.object().shape({
     .required("Please enter the postal code"),
   State: name1,
   MtnVndr: yup
-  .boolean()
+    .boolean()
   ,
   Supplier: yup
-  .boolean()
-,
+    .boolean()
+  ,
 });
 
 export const CompnayValidationSchema = yup.object().shape({
@@ -155,7 +163,7 @@ export const LocationValidationSchema = yup.object().shape({
 export const DivisionValidationSchema = yup.object().shape({
   DivName: required,
   DivDesc: required,
-  LocCode:required,
+  LocCode: required,
 });
 
 export const GLValidationSchema = yup.object().shape({
@@ -186,7 +194,17 @@ export const AssetMasterValidationSchema = yup.object().shape({
     )
     .required("Please select an asset type"),
   Description: required,
+  warrentyYear: required,
+  warrentyMonth: required,
+  periodYear: required,
+  periodMonth: required,
+
+
+
 });
+
+
+
 
 export const DepartmentValidationSchema = yup.object().shape({
   DeptName: required,
@@ -201,43 +219,71 @@ export const TaxValidationSchema = yup.object().shape({
 
 // transction validation
 export const assetAllocation = yup.object().shape({
-  AssetType: required,
-  Asset: required,
-  AssetName: required,
-  tag: required,
-  SerialNo: required,
-  barCode: required,
-  vendorName: required,
-  acquisitionDate: required,
-  expiryDate: required,
+  AssetType: yup.string().required("Asset Type is required"),
+  Asset: yup.string().required("Asset is required"),
+  AssetName: yup.string().required("Asset Name is required"),
+  tag: yup.string().required("Tag is required"),
+  SerialNo: yup.string().required("Serial No is required"),
+  barCode: yup.string().required("BarCode is required"),
+  vendorName: yup.string().required("Vendor Name is required"),
+  acquisitionDate: yup.date().transform((value, originalValue) =>
+    originalValue === "" ? null : value
+  ).required("Acquisition Date is required"),
+  expiryDate: yup.date().transform((value, originalValue) =>
+    originalValue === "" ? null : value
+  ).required("Expiry Date is required"),
+
   assetType1: yup.string().oneOf(["leased", ""]),
 
-  leasedStart: yup.date().when("assetType1", {
+  leasedStart: yup.date().transform((value, originalValue) =>
+    originalValue === "" ? null : value
+  ).when("assetType1", {
     is: "leased",
     then: (schema) => schema.required("Leased Start is required"),
     otherwise: (schema) => schema.nullable(),
   }),
-  leasedEnd: yup.date().when("assetType1", {
+
+  leasedEnd: yup.date().transform((value, originalValue) =>
+    originalValue === "" ? null : value
+  ).when("assetType1", {
     is: "leased",
-    then: (schema) => schema.required("Leased End is required"),
+    then: (schema) =>
+      schema
+        .required("Leased End is required")
+        .min(yup.ref("leasedStart"), "Leased End must be after Leased Start"),
     otherwise: (schema) => schema.nullable(),
   }),
 
-  warranty: required,
+  warranty: yup.date().transform((value, originalValue) =>
+    originalValue === "" ? null : value
+  ).required("Warranty is required"),
 
   cost: yup
     .number()
-    .typeError("Cost value must be a number")
-    .required("Cost value is required")
-    .positive("Cost value must be greater than zero")
-    .max(10000000, "Cost value cannot exceed 1 crore"),
+    .typeError("Cost must be a number")
+    .required("Cost is required"),
+
   purValue: yup
     .number()
-    .typeError("Purchase value must be a number")
+    .typeError("Purchase Value must be a number")
     .required("Purchase value is required")
-    .positive("Purchase value must be greater than zero")
-    .max(10000000, "Purchase value cannot exceed 1 crore"),
-  image: yup.mixed().required("Image is required"),
+    .test("greater-than-cost", "Purchase value must be greater than cost", function (value) {
+      const { cost } = this.parent;
+      return value > cost;
+    }),
+
+  image: yup
+    .mixed()
+    .test(
+      "fileType",
+      "Only image files are allowed (JPG, PNG, GIF, BMP, WEBP)",
+      (value) => {
+        return (
+          value && value[0]?.name?.match(/^.*\.(jpg|jpeg|png|gif|bmp|webp)$/i)
+        );
+      }
+    )
+    .required("File is required")
 });
 
 export const step1Schema = yup.object().shape({
@@ -292,9 +338,13 @@ export const ContractEntrySchemas = yup.object().shape({
   support: required,
   //   assets: required,
   //   maintenanceCost: number,
-  fromDate: yup.date().required("From date is required"),
+  fromDate: yup.date().transform((value, originalValue) =>
+    originalValue === "" ? null : value
+  ).required("From date is required"),
   toDate: yup
-    .date()
+    .date().transform((value, originalValue) =>
+      originalValue === "" ? null : value
+    )
     .required("To date is required")
     .min(yup.ref("fromDate"), "To date must be after From date"),
   notification: yup.boolean(),
@@ -308,9 +358,13 @@ export const InsuranceEntrySchemas = yup.object().shape({
   description: required,
   //   assets: required,
   //   maintenanceCost: number,
-  fromDate: yup.date().required("From date is required"),
+  fromDate: yup.date().transform((value, originalValue) =>
+    originalValue === "" ? null : value
+  ).required("From date is required"),
   toDate: yup
-    .date()
+    .date().transform((value, originalValue) =>
+      originalValue === "" ? null : value
+    )
     .required("To date is required")
     .min(yup.ref("fromDate"), "To date must be after From date"),
   notification: yup.boolean(),

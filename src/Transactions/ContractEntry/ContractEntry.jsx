@@ -90,6 +90,9 @@ const ContractEntry = () => {
     setAssetList(updateList);
     console.log("del");
   };
+
+  
+
   useEffect(() => {
     const ans1 = assetList.reduce((sum, item) => {
       return sum + Number(item.maintenanceCost);

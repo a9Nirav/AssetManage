@@ -31,7 +31,7 @@ const UserMaster = () => {
 
   }, [dispatch]);
 
-  // const [userType, setUserType] = useState(""); // 'login' or 'technician'
+  const [userType, setUserType] = useState("login"); // 'login' or 'technician'
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -60,12 +60,13 @@ const UserMaster = () => {
   } = useForm({
     resolver: yupResolver(userValidationSchema),
     defaultValues: {
-      login: false,
-      services: false,
+      Login: false,
+      Services: false,
     },
   });
 
   const onSubmit = async (data) => {
+
 
     await dispatch(createUser(data)).unwrap();
     console.log("Form Data:", data);
@@ -73,8 +74,9 @@ const UserMaster = () => {
     console.log("hey")
 
   };
+  console.log(errors.UserPwd)
 
-  const isLogin = watch('login');
+  const isLogin = watch('Login');
 
   return (
     <>
@@ -103,10 +105,10 @@ const UserMaster = () => {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row">
-              <CustomInput label="Name" name="user_Name" register={register} errors={errors} />
-              <CustomInput label="Email" name="email_ID" type="email" register={register} errors={errors} />
-              <CustomInput label="Phone" name="phone_No" type="number" register={register} errors={errors} />
-              <CustomInput label="Job Title" name="job_Title" register={register} errors={errors} />
+              <CustomInput label="Name" name="User_Name" register={register} errors={errors} />
+              <CustomInput label="Email" name="Email_ID" type="email" register={register} errors={errors} />
+              <CustomInput label="Phone" name="Phone_No" type="number" register={register} errors={errors} />
+              <CustomInput label="Job Title" name="Job_Title" register={register} errors={errors} />
 
 
               {/* Division Dropdown */}
@@ -124,30 +126,37 @@ const UserMaster = () => {
                   ))}
                 </select>
                 <div className="invalid-feedback">{errors.selectLocation?.message}</div> */}
-                <Autocomplete
-                  options={division}
-                  getOptionLabel={(option) => option.DivName}
-                  value={selectedDivision}
-                  onChange={(e, value) => {
-                    setSelectedDivision(value)
-                    setValue("DivCode", value?.DivCode || "");
-                  }}
-                  renderInput={(params) => (
+                <Controller
+                  name="Div_Code"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
                     <>
                       <label className="form-label">Division Name</label>
-                      <TextField
-                        {...params}
-                        placeholder="Type to search Division"
-
-                        className={`form-control ${errors?.div_Code ? "is-invalid" : ""}`}
-
+                      <Autocomplete
+                        options={division}
+                        getOptionLabel={(option) => option?.DivName || ""}
+                        isOptionEqualToValue={(option, value) => option?.DivCode === value?.DivCode}
+                        value={division.find((divi) => divi.DivCode === field.value) || null}
+                        onChange={(event, newValue) => {
+                          field.onChange(newValue?.DivCode || "");
+                          setSelectedDept(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <>
+                            <TextField
+                              {...params}
+                              placeholder="Type to search Division"
+                              className={`form-control ${errors?.Div_Code ? "is-invalid" : ""}`}
+                            />
+                            {errors?.Div_Code && (
+                              <div className="invalid-feedback d-block">
+                                {`Division Name ${errors?.Div_Code.message}`}
+                              </div>
+                            )}
+                          </>
+                        )}
                       />
-                      {errors?.div_Code && (
-                        <div className="invalid-feedback">
-                          {` ${errors?.div_Code.message} `}
-                        </div>
-                      )}
-
                     </>
                   )}
                 />
@@ -157,40 +166,46 @@ const UserMaster = () => {
               {/* Location Dropdown */}
               <div className="col-md-6 mb-3">
                 <Controller
-                  name="LocCode"
+                  name="Loc_Code"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
                     <>
                       <label className="form-label">Location Name</label>
                       <Autocomplete
-                        options={locations}
-                        getOptionLabel={(option) => option?.LocName || ""}
-                        isOptionEqualToValue={(option, value) => option?.LocCode === value?.LocCode}
-                        value={locations.find((loc) => loc.LocCode === field.value) || null}
+                        options={Dept}
+                        getOptionLabel={(option) => option?.DeptName || ""}
+                        isOptionEqualToValue={(option, value) => option?.DeptCode === value?.DeptCode}
+                        value={Dept.find((dept) => dept.DeptCode === field.value) || null}
                         onChange={(event, newValue) => {
-                          field.onChange(newValue?.LocCode || ""); // set LocCode
-                          setSelectedLocation(newValue);           // optional state
+                          field.onChange(newValue?.DeptCode || "");
+                          setSelectedLocation(newValue);
                         }}
                         renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            placeholder="Type to search location"
-                            className={errors?.loc_Code ? "is-invalid" : ""}
-                            error={!!errors?.loc_Code}
-                            helperText={errors?.loc_Code?.message}
-                          />
+                          <>
+                            <TextField
+                              {...params}
+                              placeholder="Type to search Location"
+                              className={`form-control ${errors?.Loc_Code ? "is-invalid" : ""}`}
+                            />
+                            {errors?.Loc_Code && (
+                              <div className="invalid-feedback d-block">
+                                {`Department Name ${errors?.Loc_Code.message}`}
+                              </div>
+                            )}
+                          </>
                         )}
                       />
                     </>
                   )}
                 />
+
               </div>
 
               {/* Department Dropdown */}
               <div className="col-md-6 mb-3">
                 <Controller
-                  name="dept_Code"
+                  name="Dept_Code"
                   control={control}
                   rules={{ required: "is required" }}
                   render={({ field }) => (
@@ -208,11 +223,11 @@ const UserMaster = () => {
                           <TextField
                             {...params}
                             placeholder="Type to search Department"
-                            className={`form-control ${errors?.dept_Code ? "is-invalid" : ""}`}
+                            className={`form-control ${errors?.Dept_Code ? "is-invalid" : ""}`}
                           />
-                          {errors?.dept_Code && (
+                          {errors?.Dept_Code && (
                             <div className="invalid-feedback">
-                              {`Department Name ${errors?.dept_Code.message}`}
+                              {`Department Name ${errors?.Dept_Code.message}`}
                             </div>
                           )}
                         </>
@@ -226,13 +241,13 @@ const UserMaster = () => {
               {/* Radio Button for Role Selection */}
               <div className="col-md-6 mb-3 d-flex align-items-center">
 
-                <input type="checkbox" {...register('services')} />
+                <input type="checkbox" {...register('Services')} />
                 <label className="ms-2 me-3">   Services  </label>
 
 
 
 
-                <input type="checkbox" {...register('login')} />
+                <input type="checkbox" {...register('Login')} />
                 <label className="ms-2"> Login   </label>
 
               </div>
@@ -243,15 +258,15 @@ const UserMaster = () => {
               {isLogin && (
                 <>
 
-                  <CustomInput label="User ID" name="userid" register={register} errors={errors} />
+                  <CustomInput label="User ID" name="Userid" register={register} errors={errors} />
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Role:<sup className="text-red-500">*</sup></label>
-                    <select className={`form-select form-control ${errors.rollid ? "is-invalid" : ""}`} {...register("rollid")}>
+                    <select className={`form-select form-control ${errors.Rollid ? "is-invalid" : ""}`} {...register("Rollid")}>
                       <option value="">Select a Role</option>
                       <option value="admin">Admin</option>
                       <option value="other">Other</option>
                     </select>
-                    <div className="invalid-feedback">{errors.rollid?.message}</div>
+                    <div className="invalid-feedback">{errors.Rollid?.message}</div>
                   </div>
 
 
@@ -260,14 +275,15 @@ const UserMaster = () => {
                     <div className="input-group">
                       <input
                         type={showPassword ? "text" : "password"}
-                        className={`form-control ${errors.userPwd ? "is-invalid" : ""}`}
-                        {...register("userPwd")}
+                        className={`form-control ${errors.UserPwd ? "is-invalid" : ""}`}
+                        {...register("UserPwd")}
                       />
                       <span className="input-group-text" onClick={togglePasswordVisibility} style={{ cursor: "pointer" }}>
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </span>
                     </div>
-                    <div className="invalid-feedback">{errors.password?.message}</div>
+                    {errors.UserPwd && <div className="invalid-feedback d-block">{errors.UserPwd?.message}</div>}
+
                   </div>
 
 
@@ -286,9 +302,12 @@ const UserMaster = () => {
                         {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                       </span>
                     </div>
-                    <div className="invalid-feedback">{errors.confirmPassword?.message}</div>
+
+                    {errors.confirmPassword && <div className="invalid-feedback d-block">{errors.confirmPassword?.message}</div>}
+
+
                   </div>
-                  <CustomInput label="Compnay Code" name="comCode" register={register} errors={errors} />
+                  <CustomInput label="Compnay Code" name="ComCode" register={register} errors={errors} />
                 </>
               )}
             </div>
