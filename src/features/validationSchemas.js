@@ -305,9 +305,26 @@ export const step1Schema = yup.object().shape({
 });
 
 export const step2Schema = yup.object().shape({
-  // Items:required,
+  Items: required,
   // cost:number,
   // quantity:number,
+  adjPrice: yup.number()
+
+    .nullable()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    )
+    .max(yup.ref("subTotal"), "Adjustment Price cannot be greater than Subtotal"),
+  subTotal: yup.number(),
+  shippingCost: yup
+    .number()
+    .typeError("Shipping Cost must be a number")
+    .nullable()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    )
+    .min(0, "Shipping Cost cannot be negative"),
+    tax:required
 });
 
 export const step3Schema = yup.object().shape({

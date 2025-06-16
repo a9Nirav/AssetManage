@@ -5,6 +5,7 @@ import { MdDelete } from "react-icons/md";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FaUpload } from "react-icons/fa6";
+import { toast, ToastContainer } from "react-toastify";
 import CustomInput from "../../components/CustomInput/CustomInput";
 import {
   step1Schema,
@@ -19,9 +20,10 @@ import {
   Stepper,
   Step,
   StepLabel,
-//   TextField,
-//   Typography,
+  //   TextField,
+  //   Typography,
 } from "@mui/material";
+import { number } from "yup";
 
 const PurchaseOrder = () => {
   const steps = ["Basic Info", "Add Items", "Shipping Details"];
@@ -37,16 +39,18 @@ const PurchaseOrder = () => {
     shippingCost: "",
     tax: "",
     salesTax: "",
+    adjPrice: ""
   });
-  console.log(calData.tax);
+  console.log(calData);
 
   const [itemList, setItemList] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [subTotal, setSubTotal] = useState();
-  // const [shippingCost, setShippingCost] = useState("");
+  const [shippingCost, setShippingCost] = useState("");
+  const [totalCost, setTotalCost] = useState("");
   // const [tax, setTax] = useState("");
-  // const [salesTax, setSalesTax] = useState("");
-  // const [adj,setAdj]=useState("")
+  const [salesTax, setSalesTax] = useState("");
+  const [adjPrice, setAdjPrice] = useState("")
 
   // const handelTotal = (e) => {
   //     setShippingCost(e.target.value);
@@ -64,15 +68,7 @@ const PurchaseOrder = () => {
   //     shippingCost: "",
   // });
 
-  useEffect(() => {
-    const IteamSubTotal = itemList.reduce((sum, item) => {
-      return sum + Number(item.cost) * Number(item.quantity);
-    }, 0);
 
-    setSubTotal(IteamSubTotal);
-
-    const SalesTax1 = IteamSubTotal;
-  }, [itemList]);
 
   const handleEdit = (index) => {
     setItemData(itemList[index]); // Fill inputs
@@ -85,6 +81,12 @@ const PurchaseOrder = () => {
     setCalData({ ...calData, [name]: value });
   };
 
+
+
+
+
+
+  console.log(totalCost)
   // const TotalAmt = (e) => {
   //     const { name, value } = e.target;
   //     SetTotal({...total,[name]:value})
@@ -101,11 +103,12 @@ const PurchaseOrder = () => {
     } else {
       // In add mode
       setItemList([...itemList, itemData]);
+
+      setItemData({ Items: " ", cost: " ", quantity: " " });
     }
 
 
 
-    setItemData({ Items: " ", cost: " ", quantity: " " }); // Reset fields
   };
 
   const handleDelete = (index) => {
@@ -113,7 +116,7 @@ const PurchaseOrder = () => {
     updatedList.splice(index, 1);
     setItemList(updatedList);
   };
-  
+
 
 
 
@@ -125,26 +128,75 @@ const PurchaseOrder = () => {
     register,
     handleSubmit,
     control,
+    setValue,
     trigger,
+    watch,
+
     formState: { errors },
   } = useForm({
     resolver: yupResolver(currentSchema),
+    defaultValues: { subTotal: subTotal},
     mode: "onTouched",
   });
 
+
+const watchShippingCost = watch("shippingCost") || 0;
+const watchTax = watch("tax") || 0;
+const watchAdjPrice = watch("adjPrice") || 0;
+
+
+  useEffect(() => {
+    const IteamSubTotal = itemList.reduce((sum, item) => {
+      return sum + Number(item.cost) * Number(item.quantity);
+    }, 0);
+
+    setSubTotal(IteamSubTotal);
+    setValue("subTotal", IteamSubTotal);
+
+    const B = Number(watchShippingCost) || 0;
+    setShippingCost(B)
+    const C = IteamSubTotal * Number(watchTax) / 100
+    setSalesTax(C)
+    const D = Number(watchAdjPrice ?? 0)
+    setAdjPrice(D)
+
+
+    setTotalCost(IteamSubTotal + B + C - D)
+
+
+
+    const SalesTax1 = IteamSubTotal;
+
+  }, [itemList, watchShippingCost, watchTax, watchAdjPrice, setValue]);
+
   const onNext = async () => {
     const valid = await trigger();
+
     if (valid) setStep((prev) => prev + 1);
   };
 
   const onBack = () => setStep((prev) => prev - 1);
 
   const onSubmit = (data) => {
-    console.log("Final Submission Data:", data);
+
+
+
+    const finaldata = {
+      ...data,
+      itemList,
+      calData,
+      totalCost,
+      subTotal,
+
+    }
+    console.log("Final Submission Data:", finaldata);
+    toast.success("Data Submit succes")
+
   };
 
   return (
     <>
+      <ToastContainer />
       <div className="right-content">
         <div className="card shadow border-0 w-100 flex-row p-4 res-col d-flex justify-content-between">
           <h5 className="mb-0 d-flex align-items-center">Purchase Order</h5>
@@ -232,9 +284,8 @@ const PurchaseOrder = () => {
                         Vendor Name:<sup className="text-red-500">*</sup>
                       </label>
                       <select
-                        className={`form-select form-control ${
-                          errors.vendorName ? "is-invalid" : ""
-                        }`}
+                        className={`form-select form-control ${errors.vendorName ? "is-invalid" : ""
+                          }`}
                         {...register("vendorName")}
                       >
                         <option value="">Select a Vendor Name</option>
@@ -255,9 +306,8 @@ const PurchaseOrder = () => {
                       <label className="form-label">Address:</label>
                       <textarea
                         type="text"
-                        className={` form-control ${
-                          errors.Address ? "is-invalid" : ""
-                        }`}
+                        className={` form-control ${errors.Address ? "is-invalid" : ""
+                          }`}
                         {...register("Address")}
                         placeholder="Enter your name"
                       />
@@ -268,9 +318,8 @@ const PurchaseOrder = () => {
                       <label className="form-label">Remarks:</label>
                       <textarea
                         type="text"
-                        className={` form-control ${
-                          errors.Remarks ? "is-invalid" : ""
-                        }`}
+                        className={` form-control ${errors.Remarks ? "is-invalid" : ""
+                          }`}
                         {...register("Remarks")}
                         placeholder="Enter your name"
                       />
@@ -281,9 +330,8 @@ const PurchaseOrder = () => {
                       <label className="form-label">Terms:</label>
                       <textarea
                         type="text"
-                        className={` form-control ${
-                          errors.Terms ? "is-invalid" : ""
-                        }`}
+                        className={` form-control ${errors.Terms ? "is-invalid" : ""
+                          }`}
                         {...register("Terms")}
                         placeholder="Enter your name"
                       />
@@ -297,9 +345,8 @@ const PurchaseOrder = () => {
                         Location:<sup className="text-red-500">*</sup>
                       </label>
                       <select
-                        className={`form-select form-control ${
-                          errors.Location ? "is-invalid" : ""
-                        }`}
+                        className={`form-select form-control ${errors.Location ? "is-invalid" : ""
+                          }`}
                         {...register("Location")}
                       >
                         <option value="">Select a Vendor Name</option>
@@ -313,9 +360,8 @@ const PurchaseOrder = () => {
                         Division:<sup className="text-red-500">*</sup>
                       </label>
                       <select
-                        className={`form-select form-control ${
-                          errors.Division ? "is-invalid" : ""
-                        }`}
+                        className={`form-select form-control ${errors.Division ? "is-invalid" : ""
+                          }`}
                         {...register("Division")}
                       >
                         <option value="">Select a Vendor Name</option>
@@ -329,9 +375,8 @@ const PurchaseOrder = () => {
                         Department:<sup className="text-red-500">*</sup>
                       </label>
                       <select
-                        className={`form-select form-control ${
-                          errors.Department ? "is-invalid" : ""
-                        }`}
+                        className={`form-select form-control ${errors.Department ? "is-invalid" : ""
+                          }`}
                         {...register("Department")}
                       >
                         <option value="">Select a Vendor Name</option>
@@ -347,9 +392,8 @@ const PurchaseOrder = () => {
                         Allocate To:<sup className="text-red-500">*</sup>
                       </label>
                       <select
-                        className={`form-select form-control ${
-                          errors.Allocate ? "is-invalid" : ""
-                        }`}
+                        className={`form-select form-control ${errors.Allocate ? "is-invalid" : ""
+                          }`}
                         {...register("Allocate")}
                       >
                         <option value="">Select a Allocate to</option>
@@ -374,9 +418,8 @@ const PurchaseOrder = () => {
                         Items:<sup className="text-red-500">*</sup>
                       </label>
                       <select
-                        className={`form-select form-control ${
-                          errors.Items ? "is-invalid" : ""
-                        }`}
+                        className={`form-select form-control ${errors.Items ? "is-invalid" : ""
+                          }`}
                         {...register("Items")}
                         onChange={handleChange}
                         value={itemData.Items}
@@ -395,9 +438,8 @@ const PurchaseOrder = () => {
                       </label>
                       <input
                         type="text"
-                        className={`form-control ${
-                          errors.cost ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${errors.cost ? "is-invalid" : ""
+                          }`}
                         {...register("cost")}
                         onChange={handleChange}
                         value={itemData.cost}
@@ -408,14 +450,13 @@ const PurchaseOrder = () => {
 
                     <div className="col-md-3">
                       <label className="form-label ">
-                        {" "}
+
                         Quantity<sup className="text-red-500">*</sup>
                       </label>
                       <input
                         type="text"
-                        className={`form-control ${
-                          errors.quantity ? "is-invalid" : ""
-                        }`}
+                        className={`form-control ${errors.quantity ? "is-invalid" : ""
+                          }`}
                         {...register("quantity")}
                         onChange={handleChange}
                         value={itemData.quantity}
@@ -425,7 +466,7 @@ const PurchaseOrder = () => {
                     </div>
 
                     <div className="col-md-2 d-flex align-items-end">
-                      <button className="btn btn-dark" onClick={handleAdd}>
+                      <button type="button" className="btn btn-dark" onClick={handleAdd}>
                         {editIndex !== null ? "Update" : "Add"}
                       </button>
                     </div>
@@ -481,7 +522,11 @@ const PurchaseOrder = () => {
                         type="text"
                         className="form-control"
                         value={subTotal}
+
+                        readOnly
                       />
+
+                      <input type="hidden" {...register("subTotal")} />
 
                       <label className="form-label mt-3">
                         Shpping Cost (B) Rs.
@@ -492,6 +537,7 @@ const PurchaseOrder = () => {
                         name="shippingCost"
                         onChange={handleChange}
                         placeholder="Enter Shpping Cost"
+
                       />
 
                       <label className="form-label mt-3">Tax:</label>
@@ -510,18 +556,20 @@ const PurchaseOrder = () => {
 
                     <div className="col-md-6">
                       <label className="form-label ">Sales Tax (C) Rs.</label>
-                      <input type="text" className="form-control" />
+                      <input type="text" className="form-control" value={salesTax} readOnly />
 
                       <label className="form-label mt-3">
                         {" "}
                         - Price Adjustment (D) Rs.
                       </label>
-                      <input type="text" className="form-control" />
+                      <input type="text" className={` form-control ${errors.adjPrice ? "is-invalid" : ""
+                        }`} name="adjPrice"  {...register("adjPrice")}  />
+                      <div className="invalid-feedback">{`adjPrice ${errors.adjPrice?.message}`}</div>
 
                       <label className="form-label mt-3">
                         Total Cost (A+B+C-D) Rs.
                       </label>
-                      <input type="text" className="form-control" />
+                      <input type="text" className="form-control" value={totalCost} readOnly />
                     </div>
                   </div>
                 </>
@@ -530,9 +578,9 @@ const PurchaseOrder = () => {
               {step === 2 && (
                 <>
 
-                <div className="" style={{width:"300px",height:"100px",border:"2px solid #000"}}>
+                  <div className="" style={{ width: "300px", height: "100px", border: "2px solid #000" }}>
                     <img src="" alt="logo" />
-                </div>
+                  </div>
                   <div className="row">
                     <CustomInput
                       label="Company Name"
@@ -545,9 +593,8 @@ const PurchaseOrder = () => {
                       <label className="form-label">Address:</label>
                       <textarea
                         type="text"
-                        className={` form-control ${
-                          errors.address ? "is-invalid" : ""
-                        }`}
+                        className={` form-control ${errors.address ? "is-invalid" : ""
+                          }`}
                         {...register("address")}
                         placeholder="Enter your Address"
                       />
@@ -558,9 +605,8 @@ const PurchaseOrder = () => {
                       <label className="form-label"> Shipping Address:</label>
                       <textarea
                         type="text"
-                        className={` form-control ${
-                          errors.ShippingAddress ? "is-invalid" : ""
-                        }`}
+                        className={` form-control ${errors.ShippingAddress ? "is-invalid" : ""
+                          }`}
                         {...register("ShippingAddress")}
                         placeholder="Enter your Address"
                       />
@@ -571,9 +617,8 @@ const PurchaseOrder = () => {
                       <label className="form-label"> Billing Address:</label>
                       <textarea
                         type="text"
-                        className={` form-control ${
-                          errors.billingAddress ? "is-invalid" : ""
-                        }`}
+                        className={` form-control ${errors.billingAddress ? "is-invalid" : ""
+                          }`}
                         {...register("billingAddress")}
                         placeholder="Enter your Address"
                       />
@@ -587,14 +632,14 @@ const PurchaseOrder = () => {
                       errors={errors}
                     />
 
-                     <CustomInput
+                    <CustomInput
                       label="Fax"
                       name="fax"
                       register={register}
                       errors={errors}
                     />
 
-                     <CustomInput
+                    <CustomInput
                       label="Email"
                       name="email"
                       register={register}
@@ -608,7 +653,7 @@ const PurchaseOrder = () => {
                       errors={errors}
                     />
 
-                    
+
                     <CustomInput
                       label="Contact Person"
                       name="contactPerson"
